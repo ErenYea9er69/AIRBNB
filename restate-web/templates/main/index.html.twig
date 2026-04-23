@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home - Real Scout{% endblock %}
+
+{% block body %}
+<main class="max-w-7xl mx-auto px-6 py-10 pb-32 md:pb-10">
+    {# Header #}
+    <div class="flex flex-row items-center justify-between">
+        <div class="flex flex-row items-center">
+            <div class="w-12 h-12 rounded-full overflow-hidden bg-primary-200">
+                <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col items-start ml-3 justify-center">
+                <p class="text-xs font-rubik text-black-100">Good Morning</p>
+                <p class="text-base font-rubik-medium text-black-300">{{ app.user.name|default('User') }}</p>
+            </div>
+        </div>
+        <div class="w-6 h-6">
+            <img src="{{ asset('icons/bell.png') }}" alt="bell" class="w-full h-full">
+        </div>
+    </div>
+
+    {# Search #}
+    <div class="mt-8">
+        <form action="{{ path('app_explore') }}" method="GET" class="flex flex-row items-center justify-between w-full px-4 rounded-xl bg-accent-100 border border-primary-200 py-4 shadow-sm">
+            <div class="flex-1 flex flex-row items-center justify-start">
+                <img src="{{ asset('icons/search.png') }}" alt="search" class="w-5 h-5">
+                <input
+                    type="text"
+                    name="query"
+                    placeholder="Search for anything"
+                    class="text-sm font-rubik text-black-300 ml-3 flex-1 bg-transparent outline-none"
+                />
+            </div>
+            <button type="submit" class="hover:opacity-70 transition-opacity">
+                <img src="{{ asset('icons/filter.png') }}" alt="filter" class="w-5 h-5">
+            </button>
+        </form>
+    </div>
+
+    {# Featured #}
+    <div class="mt-10">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-rubik-bold text-black-300">Featured</h2>
+            <a href="{{ path('app_explore') }}" class="text-base font-rubik-bold text-primary-300">See All</a>
+        </div>
+        
+        <div class="flex flex-row gap-5 overflow-x-auto pb-4 no-scrollbar">
+            {% for item in latestProperties %}
+                    <a href="{{ path('app_property_show', {id: item.id}) }}" class="min-w-[280px] h-[380px] relative rounded-3xl overflow-hidden cursor-pointer group">
+                        <img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <img src="{{ asset('images/card-gradient.png') }}" class="absolute inset-0 w-full h-full">
+                        
+                        <div class="absolute top-5 right-5 flex flex-row items-center bg-white/90 px-3 py-1.5 rounded-full shadow-sm">
+                            <img src="{{ asset('icons/star.png') }}" class="w-3.5 h-3.5">
+                            <span class="text-xs font-rubik-bold text-primary-300 ml-1">{{ item.rating }}</span>
+                        </div>
+                        
+                        <div class="absolute bottom-5 inset-x-5 flex flex-col items-start translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 class="text-xl font-rubik-extrabold text-white line-clamp-1">{{ item.title }}</h3>
+                            <p class="text-sm font-rubik text-white/90 mt-1 line-clamp-1">{{ item.address }}</p>
+                            
+                            <div class="flex flex-row items-center justify-between w-full mt-3">
+                                <p class="text-xl font-rubik-extrabold text-white">${{ item.price|number_format }}</p>
+                                <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                    <img src="{{ asset('icons/heart.png') }}" class="w-5 h-5 brightness-200">
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+            {% else %}
+                <p class="text-black-100 italic">No featured properties yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Filter Categories #}
+    <div class="mt-8">
+        <div class="flex flex-row gap-3 overflow-x-auto no-scrollbar">
+            <a href="{{ path('app_home') }}" class="px-6 py-2 rounded-full border border-primary-200 {{ not activeCategoryId ? 'bg-primary-300 text-white' : 'bg-white text-black-300' }} font-rubik-medium whitespace-nowrap">All</a>
+            {% for cat in categories %}
+                <a href="{{ path('app_home', {'category': cat.id}) }}" class="px-6 py-2 rounded-full border border-primary-200 {{ activeCategoryId == cat.id ? 'bg-primary-300 text-white' : 'bg-white text-black-300 hover:bg-primary-100/50' }} font-rubik-medium transition-colors whitespace-nowrap">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {# Recommendations #}
+    <div class="mt-10">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-rubik-bold text-black-300">Our Recommendation</h2>
+            <a href="{{ path('app_explore') }}" class="text-base font-rubik-bold text-primary-300">See All</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in recommendations %}
+                <a href="{{ path('app_property_show', {id: item.id}) }}" class="flex flex-col items-start bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+                    <div class="w-full h-40 relative rounded-xl overflow-hidden">
+                         <img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                         <div class="absolute top-3 right-3 flex flex-row items-center bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
+                            <img src="{{ asset('icons/star.png') }}" class="w-3 h-3">
+                            <span class="text-[10px] font-rubik-bold text-primary-300 ml-1">{{ item.rating }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 w-full">
+                        <h3 class="text-base font-rubik-bold text-black-300 line-clamp-1">{{ item.title }}</h3>
+                        <p class="text-xs font-rubik text-black-100 mt-1 line-clamp-1">{{ item.address }}</p>
+                        
+                        <div class="flex flex-row items-center justify-between w-full mt-3">
+                            <p class="text-base font-rubik-bold text-primary-300">${{ item.price|number_format }}</p>
+                            <img src="{{ asset('icons/heart.png') }}" class="w-5 h-5 opacity-40">
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}

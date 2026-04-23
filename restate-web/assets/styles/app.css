@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Rubik';
+    src: url('../fonts/Rubik-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Rubik-Bold';
+    src: url('../fonts/Rubik-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Rubik-Medium';
+    src: url('../fonts/Rubik-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Rubik-SemiBold';
+    src: url('../fonts/Rubik-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Rubik-Light';
+    src: url('../fonts/Rubik-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@theme {
+  --font-rubik: "Rubik", sans-serif;
+  --font-rubik-bold: "Rubik-Bold", sans-serif;
+  --font-rubik-medium: "Rubik-Medium", sans-serif;
+  --font-rubik-semibold: "Rubik-SemiBold", sans-serif;
+  --font-rubik-light: "Rubik-Light", sans-serif;
+
+  --color-primary-100: #0061FF0A;
+  --color-primary-200: #0061FF1A;
+  --color-primary-300: #0061FF;
+  
+  --color-accent-100: #FBFBFD;
+  
+  --color-black-100: #8C8E98;
+  --color-black-200: #666876;
+  --color-black-300: #191D31;
+  
+  --color-danger: #F75555;
+}
+
+body {
+    background-color: white;
+    font-family: var(--font-rubik);
+}
+
+.font-rubik-bold { font-family: var(--font-rubik-bold); font-weight: 700; }
+.font-rubik-medium { font-family: var(--font-rubik-medium); font-weight: 500; }
+.font-rubik-semibold { font-family: var(--font-rubik-semibold); font-weight: 600; }
+.font-rubik-light { font-family: var(--font-rubik-light); font-weight: 300; }

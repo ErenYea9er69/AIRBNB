@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Real Scout{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏠</text></svg>">
+        
+        {% block stylesheets %}
+            {{ importmap('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="bg-primary-100/10 min-h-screen">
+        <div class="flex flex-col min-h-screen">
+            {% block body %}{% endblock %}
+            
+            {% block footer_nav %}
+                {# Standard Bottom Nav for Mobile #}
+                <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-primary-200 px-6 py-3 flex justify-between items-center z-50">
+                    <a href="{{ path('app_home') }}" class="flex flex-col items-center">
+                        <img src="{{ asset('icons/home.png') }}" alt="home" class="w-6 h-6">
+                        <span class="text-[10px] font-rubik mt-1">Home</span>
+                    </a>
+                    <a href="{{ path('app_explore') }}" class="flex flex-col items-center">
+                        <img src="{{ asset('icons/search.png') }}" alt="explore" class="w-6 h-6">
+                        <span class="text-[10px] font-rubik mt-1">Explore</span>
+                    </a>
+                    <a href="{{ path('app_profile') }}" class="flex flex-col items-center">
+                        <img src="{{ asset('icons/person.png') }}" alt="profile" class="w-6 h-6">
+                        <span class="text-[10px] font-rubik mt-1">Profile</span>
+                    </a>
+                </nav>
+            {% endblock %}
+        </div>
+    </body>
+</html>

@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile - Real Scout{% endblock %}
+
+{% block body %}
+<main class="max-w-7xl mx-auto px-6 py-10 pb-32 md:pb-10">
+    <div class="flex flex-row items-center justify-between mb-8">
+        <h1 class="text-xl font-rubik-bold text-black-300">Profile</h1>
+        <div class="w-6 h-6">
+            <img src="{{ asset('icons/bell.png') }}" alt="bell" class="w-full h-full">
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center mt-5">
+        <div class="relative">
+            <div class="w-32 h-32 rounded-full overflow-hidden bg-primary-200 border-4 border-white shadow-lg">
+                <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar" class="w-full h-full object-cover">
+            </div>
+            <button class="absolute bottom-1 right-1 bg-primary-300 p-2 rounded-full shadow-md hover:bg-primary-300/90 transition-colors">
+                <img src="{{ asset('icons/edit.png') }}" class="w-4 h-4 brightness-200">
+            </button>
+        </div>
+        <h2 class="text-2xl font-rubik-bold text-black-300 mt-4">{{ app.user.name|default('User Name') }}</h2>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-5">
+        {# Settings Section #}
+        <div class="flex flex-col border-b border-primary-100 pb-5">
+            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
+                <div class="flex flex-row items-center">
+                    <img src="{{ asset('icons/calendar.png') }}" class="w-6 h-6">
+                    <span class="text-lg font-rubik-medium text-black-300 ml-4">My Bookings</span>
+                </div>
+                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+            </div>
+            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
+                <div class="flex flex-row items-center">
+                    <img src="{{ asset('icons/wallet.png') }}" class="w-6 h-6">
+                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Payments</span>
+                </div>
+                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+            </div>
+        </div>
+
+        <div class="flex flex-col border-b border-primary-100 pb-5">
+               <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
+                <div class="flex flex-row items-center">
+                    <img src="{{ asset('icons/person.png') }}" class="w-6 h-6">
+                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Profile Settings</span>
+                </div>
+                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+            </div>
+            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
+                <div class="flex flex-row items-center">
+                    <img src="{{ asset('icons/bell.png') }}" class="w-6 h-6">
+                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Notifications</span>
+                </div>
+                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+            </div>
+        </div>
+
+        <div class="flex flex-col pb-5">
+            <a href="{{ path('app_logout') }}" class="flex flex-row items-center py-3 cursor-pointer group">
+                <img src="{{ asset('icons/logout.png') }}" class="w-6 h-6">
+                <span class="text-lg font-rubik-medium text-danger ml-4">Logout</span>
+            </a>
+        </div>
+    </div>
+</main>
+{% endblock %}
