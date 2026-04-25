@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Booking;
 use App\Entity\Property;
 use App\Form\PropertyType;
 use App\Repository\PropertyRepository;
@@ -19,20 +20,33 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class SellerController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_seller_dashboard')]
-    public function index(PropertyRepository $propertyRepository): Response
+    public function index(PropertyRepository $propertyRepository, EntityManagerInterface $entityManager): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $agent = $user->getAgent();
 
         $properties = [];
+        $bookings = [];
+        
         if ($agent) {
             $properties = $propertyRepository->findBy(['agent' => $agent]);
+            
+            // Fetch all bookings for all properties owned by this agent
+            $bookings = $entityManager->getRepository(Booking::class)
+                ->createQueryBuilder('b')
+                ->join('b.property', 'p')
+                ->where('p.agent = :agent')
+                ->setParameter('agent', $agent)
+                ->orderBy('b.visitDate', 'ASC')
+                ->getQuery()
+                ->getResult();
         }
 
         return $this->render('seller/dashboard.html.twig', [
             'properties' => $properties,
             'agent' => $agent,
+            'bookings' => $bookings,
         ]);
     }
 
@@ -138,6 +152,26 @@ class SellerController extends AbstractController
                 $entityManager->remove($property);
                 $entityManager->flush();
             }
+        }
+
+        return $this->redirectToRoute('app_seller_dashboard');
+    }
+
+    #[Route('/booking/{id}/{status}', name: 'app_seller_booking_status', methods: ['POST'])]
+    public function updateBookingStatus(Booking $booking, string $status, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $agent = $user->getAgent();
+
+        if ($booking->getProperty()->getAgent() !== $agent) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (in_array($status, ['confirmed', 'cancelled', 'completed'])) {
+            $booking->setStatus($status);
+            $entityManager->flush();
+            $this->addFlash('success', 'Booking status updated to ' . $status);
         }
 
         return $this->redirectToRoute('app_seller_dashboard');

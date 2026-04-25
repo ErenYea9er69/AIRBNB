@@ -2,7 +2,7 @@
 
 {% block title %}Profile - Real Scout{% endblock %}
 
-{% block footer_nav %}{% endblock %}
+
 
 {% block body %}
 <style>
@@ -150,6 +150,31 @@
 
         {# ─── RIGHT CONTENT ─── #}
         <div class="profile-content">
+
+            {# My Visit Requests (Bookings) #}
+            <div class="content-card" style="margin-bottom:24px;">
+                <h2 class="content-title">My Visit Requests</h2>
+                {% if bookings|length > 0 %}
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    {% for booking in bookings %}
+                    <div style="padding:16px; background:#f8f9fc; border-radius:16px; display:flex; align-items:center; justify-content:space-between;">
+                        <div style="display:flex; align-items:center; gap:16px;">
+                            <img src="{{ asset(booking.property.image) }}" style="width:50px; height:50px; border-radius:10px; object-fit:cover;">
+                            <div>
+                                <p style="font-family:'Rubik-Bold',sans-serif; font-size:14px; color:#191D31; margin:0;">{{ booking.property.title }}</p>
+                                <p style="font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#0061FF; margin:2px 0 0;">{{ booking.visitDate|date('M d, Y') }} at {{ booking.visitDate|date('H:i') }}</p>
+                            </div>
+                        </div>
+                        <span class="prop-status status-{{ booking.status }}" style="padding:4px 12px; border-radius:8px; font-family:'Rubik-Medium',sans-serif; font-size:11px; text-transform:uppercase;">
+                            {{ booking.status|capitalize }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-family:'Rubik',sans-serif; font-size:14px; color:#8C8E98; text-align:center; padding:20px;">You haven't requested any visits yet.</p>
+                {% endif %}
+            </div>
 
             {# Quick Menu #}
             <div class="content-card" style="margin-bottom:24px;">

@@ -70,6 +70,7 @@ class MainController extends AbstractController
 
         return $this->render('main/profile.html.twig', [
             'savedProperties' => $user->getSavedProperties(),
+            'bookings' => $user->getBookings(),
         ]);
     }
 

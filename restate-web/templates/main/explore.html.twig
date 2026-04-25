@@ -4,20 +4,6 @@
 
 {% block body %}
 <main class="max-w-7xl mx-auto px-6 py-10 pb-32 md:pb-10">
-    <div class="flex flex-row items-center justify-between">
-        <button onclick="window.history.back()" class="flex items-center justify-center bg-primary-200 rounded-full w-10 h-10 hover:bg-primary-300/20 transition-colors">
-            <img src="{{ asset('icons/back-arrow.png') }}" alt="back" class="w-5 h-5">
-        </button>
-
-        <h1 class="text-base font-rubik-medium text-black-300">
-            Search for Your Ideal Home
-        </h1>
-        
-        <div class="w-6 h-6">
-            <img src="{{ asset('icons/bell.png') }}" alt="bell" class="w-6 h-6">
-        </div>
-    </div>
-
     {# Search #}
     <div class="mt-8">
         <form action="{{ path('app_explore') }}" method="GET" class="flex flex-row items-center justify-between w-full px-4 rounded-xl bg-accent-100 border border-primary-200 py-4 shadow-sm">

@@ -79,10 +79,17 @@ class Property
     #[ORM\OneToMany(targetEntity: Gallery::class, mappedBy: 'property', orphanRemoval: true)]
     private Collection $galleries;
 
+    /**
+     * @var Collection<int, Booking>
+     */
+    #[ORM\OneToMany(mappedBy: 'property', targetEntity: Booking::class, orphanRemoval: true)]
+    private Collection $bookings;
+
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
         $this->galleries = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -350,6 +357,36 @@ class Property
     public function setLongitude(?float $longitude): static
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getProperty() === $this) {
+                $booking->setProperty(null);
+            }
+        }
 
         return $this;
     }

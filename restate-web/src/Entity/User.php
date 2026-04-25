@@ -18,6 +18,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->savedProperties = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     #[ORM\Id]
@@ -42,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\ManyToMany(targetEntity: Property::class)]
     private Collection $savedProperties;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Booking::class, orphanRemoval: true)]
+    private Collection $bookings;
 
     /**
      * @var list<string> The user roles
@@ -196,6 +200,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeSavedProperty(Property $property): static
     {
         $this->savedProperties->removeElement($property);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getUser() === $this) {
+                $booking->setUser(null);
+            }
+        }
 
         return $this;
     }
