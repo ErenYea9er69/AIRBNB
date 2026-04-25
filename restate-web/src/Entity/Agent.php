@@ -24,6 +24,10 @@ class Agent
     #[ORM\Column(length: 255)]
     private ?string $avatar = null;
 
+    #[ORM\OneToOne(inversedBy: 'agent', targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
     /**
      * @var Collection<int, Property>
      */
@@ -102,6 +106,18 @@ class Agent
                 $property->setAgent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

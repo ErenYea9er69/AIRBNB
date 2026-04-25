@@ -7,12 +7,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public function __construct()
+    {
+        $this->savedProperties = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -23,6 +30,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $userType = 'buyer'; // default to buyer
+
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Agent::class, cascade: ['persist', 'remove'])]
+    private ?Agent $agent = null;
+
+    /**
+     * @var Collection<int, Property>
+     */
+    #[ORM\ManyToMany(targetEntity: Property::class)]
+    private Collection $savedProperties;
 
     /**
      * @var list<string> The user roles
@@ -121,5 +140,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getUserType(): ?string
+    {
+        return $this->userType;
+    }
+
+    public function setUserType(string $userType): static
+    {
+        $this->userType = $userType;
+
+        return $this;
+    }
+
+    public function getAgent(): ?Agent
+    {
+        return $this->agent;
+    }
+
+    public function setAgent(?Agent $agent): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($agent === null && $this->agent !== null) {
+            $this->agent->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($agent !== null && $agent->getUser() !== $this) {
+            $agent->setUser($this);
+        }
+
+        $this->agent = $agent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Property>
+     */
+    public function getSavedProperties(): Collection
+    {
+        return $this->savedProperties;
+    }
+
+    public function addSavedProperty(Property $property): static
+    {
+        if (!$this->savedProperties->contains($property)) {
+            $this->savedProperties->add($property);
+        }
+
+        return $this;
+    }
+
+    public function removeSavedProperty(Property $property): static
+    {
+        $this->savedProperties->removeElement($property);
+
+        return $this;
     }
 }

@@ -43,6 +43,12 @@ class Property
     #[ORM\Column(length: 255)]
     private ?string $image = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $listingType = 'sale'; 
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $status = 'available';
+
     #[ORM\ManyToOne(inversedBy: 'properties')]
     private ?Agent $agent = null;
 
@@ -260,6 +266,30 @@ class Property
                 $gallery->setProperty(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getListingType(): ?string
+    {
+        return $this->listingType;
+    }
+
+    public function setListingType(?string $listingType): static
+    {
+        $this->listingType = $listingType;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
