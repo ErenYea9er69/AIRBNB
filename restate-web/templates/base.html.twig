@@ -7,38 +7,36 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🏠</text></svg>">
         
         {% block stylesheets %}
-            {{ importmap('app') }}
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {{ importmap('app') }}
         {% endblock %}
     </head>
-    <body class="bg-primary-100/10 min-h-screen">
-        <div class="flex flex-col min-h-screen">
+    <body style="background:#f8f9fc; min-height:100vh; margin:0; font-family:'Rubik',sans-serif;">
+        <div style="display:flex; flex-direction:column; min-height:100vh;">
             {% block body %}{% endblock %}
             
             {% block footer_nav %}
                 {# Standard Bottom Nav for Mobile #}
-                <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-primary-200 px-6 py-3 flex justify-between items-center z-50">
-                    <a href="{{ path('app_home') }}" class="flex flex-col items-center">
-                        <img src="{{ asset('icons/home.png') }}" alt="home" class="w-6 h-6">
-                        <span class="text-[10px] font-rubik mt-1">Home</span>
+                <nav style="position:fixed; bottom:0; left:0; right:0; background:white; border-top:1px solid rgba(0,97,255,0.1); padding:12px 24px; display:flex; justify-content:space-around; align-items:center; z-index:50;">
+                    <a href="{{ path('app_home') }}" style="display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#666876;">
+                        <img src="{{ asset('icons/home.png') }}" alt="home" style="width:24px; height:24px;">
+                        <span style="font-size:10px; margin-top:4px;">Home</span>
                     </a>
-                    <a href="{{ path('app_explore') }}" class="flex flex-col items-center">
-                        <img src="{{ asset('icons/search.png') }}" alt="explore" class="w-6 h-6">
-                        <span class="text-[10px] font-rubik mt-1">Explore</span>
+                    <a href="{{ path('app_explore') }}" style="display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#666876;">
+                        <img src="{{ asset('icons/search.png') }}" alt="explore" style="width:24px; height:24px;">
+                        <span style="font-size:10px; margin-top:4px;">Explore</span>
                     </a>
                     {% if is_granted('ROLE_SELLER') %}
-                    <a href="{{ path('app_seller_dashboard') }}" class="flex flex-col items-center">
-                        <img src="{{ asset('icons/car-park.png') }}" alt="dashboard" class="w-6 h-6">
-                        <span class="text-[10px] font-rubik mt-1">Dashboard</span>
+                    <a href="{{ path('app_seller_dashboard') }}" style="display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#666876;">
+                        <img src="{{ asset('icons/car-park.png') }}" alt="dashboard" style="width:24px; height:24px;">
+                        <span style="font-size:10px; margin-top:4px;">Dashboard</span>
                     </a>
                     {% endif %}
-                    
-                    <a href="{{ path('app_profile') }}" class="flex flex-col items-center">
-                        <img src="{{ asset('icons/person.png') }}" alt="profile" class="w-6 h-6">
-                        <span class="text-[10px] font-rubik mt-1">Profile</span>
+                    <a href="{{ path('app_profile') }}" style="display:flex; flex-direction:column; align-items:center; text-decoration:none; color:#666876;">
+                        <img src="{{ asset('icons/person.png') }}" alt="profile" style="width:24px; height:24px;">
+                        <span style="font-size:10px; margin-top:4px;">Profile</span>
                     </a>
                 </nav>
             {% endblock %}
