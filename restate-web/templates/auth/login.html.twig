@@ -5,74 +5,138 @@
 {% block footer_nav %}{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-white flex flex-col items-center justify-start overflow-y-auto pb-10">
-    <div class="w-full max-w-[500px] flex flex-col items-center">
-        {# Onboarding Image #}
-        <div class="relative w-full aspect-[3/4] md:aspect-square mt-4">
-            <img src="{{ asset('images/onboarding.png') }}" alt="Onboarding" class="w-full h-full object-contain">
+<style>
+    .auth-page { display:grid; grid-template-columns:1fr 1fr; min-height:100vh; }
+    .auth-visual { position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+    .auth-visual-bg { position:absolute; inset:0; }
+    .auth-visual-bg img { width:100%; height:100%; object-fit:cover; display:block; }
+    .auth-visual-overlay { position:absolute; inset:0; background:linear-gradient(135deg, rgba(0,97,255,0.85) 0%, rgba(0,40,120,0.9) 100%); }
+    .auth-visual-content { position:relative; z-index:2; padding:60px; max-width:480px; }
+    .auth-visual-logo { font-family:'Rubik-Bold',sans-serif; font-size:28px; font-weight:700; color:white; margin-bottom:48px; display:flex; align-items:center; gap:10px; }
+    .auth-visual-logo span { font-size:32px; }
+    .auth-visual-title { font-family:'Rubik-Bold',sans-serif; font-size:42px; font-weight:700; color:white; line-height:1.15; margin:0; }
+    .auth-visual-desc { font-family:'Rubik',sans-serif; font-size:16px; color:rgba(255,255,255,0.75); line-height:1.7; margin:20px 0 0; }
+    .auth-visual-stats { display:flex; gap:32px; margin-top:40px; padding-top:32px; border-top:1px solid rgba(255,255,255,0.15); }
+    .auth-stat-value { font-family:'Rubik-Bold',sans-serif; font-size:28px; font-weight:700; color:white; }
+    .auth-stat-label { font-family:'Rubik',sans-serif; font-size:12px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px; }
+
+    .auth-form-side { display:flex; align-items:center; justify-content:center; padding:48px; background:white; }
+    .auth-form-container { width:100%; max-width:420px; }
+    .auth-form-header { margin-bottom:36px; }
+    .auth-form-header p { font-family:'Rubik',sans-serif; font-size:14px; color:#8C8E98; margin:0 0 8px; }
+    .auth-form-header h1 { font-family:'Rubik-Bold',sans-serif; font-size:30px; font-weight:700; color:#191D31; margin:0; }
+    .auth-form-header h1 span { color:#0061FF; }
+
+    .auth-alert { padding:12px 18px; border-radius:12px; font-family:'Rubik-Medium',sans-serif; font-size:13px; font-weight:500; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+    .auth-alert-error { background:rgba(247,85,85,0.08); color:#F75555; border:1px solid rgba(247,85,85,0.15); }
+    .auth-alert-success { background:rgba(34,197,94,0.08); color:#22c55e; border:1px solid rgba(34,197,94,0.15); }
+
+    .auth-field { margin-bottom:20px; }
+    .auth-label { display:block; font-family:'Rubik-Medium',sans-serif; font-size:13px; font-weight:500; color:#666876; margin-bottom:8px; }
+    .auth-input { width:100%; padding:14px 18px; background:#f8f9fc; border:1.5px solid rgba(0,97,255,0.08); border-radius:14px; font-family:'Rubik',sans-serif; font-size:15px; color:#191D31; outline:none; transition:all 0.25s; box-sizing:border-box; }
+    .auth-input:focus { border-color:#0061FF; background:white; box-shadow:0 0 0 4px rgba(0,97,255,0.08); }
+    .auth-input::placeholder { color:#b0b3bf; }
+
+    .auth-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+    .auth-radio-group { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+    .auth-radio-label { display:flex; align-items:center; gap:10px; padding:14px 18px; background:#f8f9fc; border:1.5px solid rgba(0,97,255,0.08); border-radius:14px; cursor:pointer; transition:all 0.25s; font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31; font-weight:500; }
+    .auth-radio-label:has(input:checked) { border-color:#0061FF; background:rgba(0,97,255,0.04); box-shadow:0 0 0 3px rgba(0,97,255,0.08); }
+    .auth-radio-label input { accent-color:#0061FF; width:18px; height:18px; }
+
+    .auth-submit { display:block; width:100%; padding:16px; background:#0061FF; color:white; font-family:'Rubik-Bold',sans-serif; font-size:16px; font-weight:700; border:none; border-radius:14px; cursor:pointer; transition:all 0.3s; box-shadow:0 6px 20px rgba(0,97,255,0.3); margin-top:28px; }
+    .auth-submit:hover { background:#0050d4; transform:translateY(-1px); box-shadow:0 8px 28px rgba(0,97,255,0.4); }
+    .auth-submit:active { transform:scale(0.98); }
+
+    .auth-footer { text-align:center; margin-top:28px; }
+    .auth-footer p { font-family:'Rubik',sans-serif; font-size:14px; color:#8C8E98; margin:0; }
+    .auth-footer a { color:#0061FF; font-family:'Rubik-Bold',sans-serif; font-weight:700; text-decoration:none; transition:color 0.2s; }
+    .auth-footer a:hover { color:#0050d4; }
+    .auth-terms { text-align:center; margin-top:32px; font-family:'Rubik',sans-serif; font-size:11px; color:#b0b3bf; }
+
+    .auth-forgot { display:block; text-align:right; font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#0061FF; text-decoration:none; margin-top:-8px; margin-bottom:8px; transition:color 0.2s; }
+    .auth-forgot:hover { color:#0050d4; }
+
+    @media (max-width:900px) {
+        .auth-page { grid-template-columns:1fr; }
+        .auth-visual { display:none; }
+        .auth-form-side { padding:32px 24px; }
+    }
+</style>
+
+<div class="auth-page">
+    {# ─── LEFT: Visual Panel ─── #}
+    <div class="auth-visual">
+        <div class="auth-visual-bg">
+            <img src="{{ asset('images/new-york.png') }}" alt="Real Estate">
         </div>
-
-        <div class="px-10 mt-6 w-full flex flex-col items-center">
-            <p class="text-sm uppercase font-rubik text-black-200 tracking-widest">
-                Welcome To Real Scout
+        <div class="auth-visual-overlay"></div>
+        <div class="auth-visual-content">
+            <div class="auth-visual-logo">
+                <span>🏠</span> Real Scout
+            </div>
+            <h2 class="auth-visual-title">Find Your Dream Home Today</h2>
+            <p class="auth-visual-desc">
+                Discover premium properties, connect with top agents, and make informed decisions with our curated marketplace.
             </p>
+            <div class="auth-visual-stats">
+                <div>
+                    <div class="auth-stat-value">2K+</div>
+                    <div class="auth-stat-label">Properties</div>
+                </div>
+                <div>
+                    <div class="auth-stat-value">500+</div>
+                    <div class="auth-stat-label">Agents</div>
+                </div>
+                <div>
+                    <div class="auth-stat-value">98%</div>
+                    <div class="auth-stat-label">Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <h1 class="text-2xl font-rubik-bold text-black-300 text-center mt-2 leading-tight">
-                Let's Get You Closer To <br />
-                <span class="text-primary-300">Your Ideal Home</span>
-            </h1>
+    {# ─── RIGHT: Login Form ─── #}
+    <div class="auth-form-side">
+        <div class="auth-form-container">
+            <div class="auth-form-header">
+                <p>Welcome back</p>
+                <h1>Sign in to <span>Real Scout</span></h1>
+            </div>
 
-            <form method="post" class="w-full mt-8 flex flex-col gap-4">
-                {% if error %}
-                    <div class="text-danger text-xs font-rubik-medium mt-1 text-center">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                {% endif %}
+            {% if error %}
+                <div class="auth-alert auth-alert-error">
+                    ✕ {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
 
-                <div class="flex flex-col gap-1">
-                    <label for="inputEmail" class="text-xs font-rubik-medium text-black-200 ml-1">Email</label>
-                    <input
-                        type="email"
-                        value="{{ last_username }}"
-                        name="_username"
-                        id="inputEmail"
-                        class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-primary-300 transition-colors font-rubik text-sm"
-                        autocomplete="email"
-                        required
-                        autofocus
-                        placeholder="example@mail.com"
-                    >
+            <form method="post">
+                <div class="auth-field">
+                    <label for="inputEmail" class="auth-label">Email Address</label>
+                    <input type="email" value="{{ last_username }}" name="_username" id="inputEmail"
+                           class="auth-input" autocomplete="email" required autofocus
+                           placeholder="you@example.com">
                 </div>
 
-                <div class="flex flex-col gap-1">
-                    <label for="inputPassword" class="text-xs font-rubik-medium text-black-200 ml-1">Password</label>
-                    <input
-                        type="password"
-                        name="_password"
-                        id="inputPassword"
-                        class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-primary-300 transition-colors font-rubik text-sm"
-                        autocomplete="current-password"
-                        required
-                        placeholder="••••••••"
-                    >
+                <div class="auth-field">
+                    <label for="inputPassword" class="auth-label">Password</label>
+                    <input type="password" name="_password" id="inputPassword"
+                           class="auth-input" autocomplete="current-password" required
+                           placeholder="Enter your password">
                 </div>
+
+                <a href="#" class="auth-forgot">Forgot password?</a>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <button
-                    type="submit"
-                    class="bg-primary-300 rounded-full w-full py-4 mt-4 shadow-lg shadow-primary-300/20 hover:bg-primary-300/90 transition-all duration-300 text-white font-rubik-bold text-lg"
-                >
-                    Sign In
-                </button>
+                <button type="submit" class="auth-submit">Sign In</button>
             </form>
 
-            <div class="mt-8 flex flex-row items-center gap-2">
-                <p class="text-sm font-rubik text-black-100">Don't have an account?</p>
-                <a href="{{ path('app_register') }}" class="text-sm font-rubik-bold text-primary-300 hover:text-primary-300/80 transition-colors">Sign Up</a>
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{{ path('app_register') }}">Create one</a></p>
             </div>
-            
-            <p class="text-[10px] text-center text-black-100 mt-10 opacity-60">
-                By continuing, you agree to our Terms of Service and Privacy Policy.
-            </p>
+
+            <p class="auth-terms">By continuing, you agree to our Terms of Service and Privacy Policy.</p>
         </div>
     </div>
 </div>
