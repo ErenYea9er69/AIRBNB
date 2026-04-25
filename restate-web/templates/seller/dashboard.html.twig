@@ -36,7 +36,10 @@
                      
                      <div class="flex flex-row items-center justify-between w-full mt-3">
                          <p class="text-base font-rubik-bold text-primary-300">${{ item.price|number_format }}</p>
-                         <a href="{{ path('app_property_show', {id: item.id}) }}" class="text-sm text-primary-300 font-rubik-medium">View</a>
+                         <div class="flex gap-3">
+                             <a href="{{ path('app_seller_property_edit', {id: item.id}) }}" class="text-sm text-black-200 font-rubik hover:text-black-300">Edit</a>
+                             <a href="{{ path('app_property_show', {id: item.id}) }}" class="text-sm text-primary-300 font-rubik-medium">View</a>
+                         </div>
                      </div>
                  </div>
              </div>

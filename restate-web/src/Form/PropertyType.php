@@ -9,10 +9,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class PropertyType extends AbstractType
 {
@@ -28,8 +30,21 @@ class PropertyType extends AbstractType
             ->add('bedrooms', NumberType::class)
             ->add('bathrooms', NumberType::class)
             ->add('description', TextareaType::class, ['required' => false])
-            ->add('image', TextType::class, [
-                'help' => 'Path or URL to the image (e.g. images/japan.png)'
+            ->add('imageFile', FileType::class, [
+                'label' => 'Property Image',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid image (JPEG, PNG, WEBP)',
+                    ])
+                ],
             ])
             ->add('listingType', ChoiceType::class, [
                 'choices'  => [
