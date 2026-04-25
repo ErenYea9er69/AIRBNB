@@ -29,6 +29,13 @@
                         <img src="{{ asset('icons/search.png') }}" alt="explore" class="w-6 h-6">
                         <span class="text-[10px] font-rubik mt-1">Explore</span>
                     </a>
+                    {% if is_granted('ROLE_SELLER') %}
+                    <a href="{{ path('app_seller_dashboard') }}" class="flex flex-col items-center">
+                        <img src="{{ asset('icons/car-park.png') }}" alt="dashboard" class="w-6 h-6">
+                        <span class="text-[10px] font-rubik mt-1">Dashboard</span>
+                    </a>
+                    {% endif %}
+                    
                     <a href="{{ path('app_profile') }}" class="flex flex-col items-center">
                         <img src="{{ asset('icons/person.png') }}" alt="profile" class="w-6 h-6">
                         <span class="text-[10px] font-rubik mt-1">Profile</span>

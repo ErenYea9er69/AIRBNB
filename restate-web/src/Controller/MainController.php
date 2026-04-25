@@ -36,10 +36,21 @@ class MainController extends AbstractController
     public function explore(PropertyRepository $propertyRepository, Request $request): Response
     {
         $query = $request->query->get('query');
-        $filter = $request->query->get('filter', 'All');
+        $filter = $request->query->get('filter', 'All'); // e.g., 'All', 'sale', 'rent'
 
-        // Logic for filtering will be added later
-        $properties = $propertyRepository->findAll();
+        $qb = $propertyRepository->createQueryBuilder('p');
+
+        if ($query) {
+            $qb->andWhere('p.title LIKE :query OR p.address LIKE :query')
+               ->setParameter('query', '%' . $query . '%');
+        }
+
+        if ($filter && $filter !== 'All') {
+            $qb->andWhere('p.listingType = :filter')
+               ->setParameter('filter', $filter);
+        }
+
+        $properties = $qb->getQuery()->getResult();
 
         return $this->render('main/explore.html.twig', [
             'properties' => $properties,

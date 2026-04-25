@@ -15,8 +15,8 @@
                 <img src="{{ asset('icons/back-arrow.png') }}" class="w-5 h-5 brightness-200">
             </button>
             <div class="flex gap-4">
-                <button class="bg-white/30 backdrop-blur-md w-10 h-10 rounded-full flex items-center justify-center border border-white/20">
-                    <img src="{{ asset('icons/heart.png') }}" class="w-6 h-6 brightness-200">
+                <button onclick="toggleFavorite({{ property.id }}, this)" class="bg-white/30 backdrop-blur-md w-10 h-10 rounded-full flex items-center justify-center border border-white/20 transition-transform active:scale-95">
+                    <img src="{{ asset('icons/heart.png') }}" class="w-6 h-6 {% if app.user and property in app.user.savedProperties %}brightness-100{% else %}brightness-200{% endif %}" id="heart-icon">
                 </button>
                 <button class="bg-white/30 backdrop-blur-md w-10 h-10 rounded-full flex items-center justify-center border border-white/20">
                     <img src="{{ asset('icons/send.png') }}" class="w-5 h-5 brightness-200">
@@ -161,4 +161,36 @@
         </div>
     </div>
 </main>
+
+<script>
+function toggleFavorite(propertyId, buttonElement) {
+    fetch(`/user/favorite/${propertyId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (response.status === 401) {
+            window.location.href = "{{ path('app_login') }}";
+            return;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.success) {
+            const icon = buttonElement.querySelector('#heart-icon');
+            if (data.isFavorite) {
+                icon.classList.remove('brightness-200');
+                icon.classList.add('brightness-100');
+                // Could also swap to a filled heart icon here if you have one
+            } else {
+                icon.classList.remove('brightness-100');
+                icon.classList.add('brightness-200');
+            }
+        }
+    })
+    .catch(error => console.error('Error toggling favorite:', error));
+}
+</script>
 {% endblock %}

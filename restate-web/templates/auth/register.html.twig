@@ -73,6 +73,20 @@
                     >
                 </div>
 
+                <div class="flex flex-col gap-2 mt-2">
+                    <label class="text-xs font-rubik-medium text-black-200 ml-1">I am a...</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 flex-1">
+                            <input type="radio" name="user_type" value="buyer" class="text-primary-300 focus:ring-primary-300" checked>
+                            <span class="text-sm font-rubik text-black-300">Buyer/Renter</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 flex-1">
+                            <input type="radio" name="user_type" value="seller" class="text-primary-300 focus:ring-primary-300">
+                            <span class="text-sm font-rubik text-black-300">Seller/Agent</span>
+                        </label>
+                    </div>
+                </div>
+
                 <button
                     type="submit"
                     class="bg-primary-300 rounded-full w-full py-4 mt-4 shadow-lg shadow-primary-300/20 hover:bg-primary-300/90 transition-all duration-300 text-white font-rubik-bold text-lg"

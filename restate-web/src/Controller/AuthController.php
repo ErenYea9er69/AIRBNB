@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Agent;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +53,22 @@ class AuthController extends AbstractController
                     $request->request->get('password')
                 )
             );
+
+            $userType = $request->request->get('user_type', 'buyer');
+            $user->setUserType($userType);
+            
+            if ($userType === 'seller') {
+                $user->setRoles(['ROLE_SELLER']);
+                
+                $agent = new Agent();
+                $agent->setName($user->getName());
+                $agent->setEmail($user->getEmail());
+                $agent->setAvatar('images/avatar.png'); // Default avatar
+                $agent->setUser($user);
+                $entityManager->persist($agent);
+            } else {
+                $user->setRoles(['ROLE_USER']);
+            }
 
             $entityManager->persist($user);
             $entityManager->flush();
