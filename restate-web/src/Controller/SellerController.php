@@ -121,6 +121,7 @@ class SellerController extends AbstractController
         return $this->render('seller/new.html.twig', [
             'property' => $property,
             'form' => $form,
+            'is_edit' => false,
         ]);
     }
 
@@ -186,6 +187,7 @@ class SellerController extends AbstractController
         return $this->render('seller/edit.html.twig', [
             'property' => $property,
             'form' => $form,
+            'is_edit' => true,
         ]);
     }
 

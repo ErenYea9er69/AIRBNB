@@ -23,8 +23,17 @@ class PropertyController extends AbstractController
             throw $this->createNotFoundException('Property not found');
         }
 
+        $similarProperties = $propertyRepository->findBy(
+            ['category' => $property->getCategory()],
+            ['id' => 'DESC'],
+            4
+        );
+        // Filter out current property
+        $similarProperties = array_filter($similarProperties, fn($p) => $p->getId() !== $property->getId());
+
         return $this->render('property/show.html.twig', [
             'property' => $property,
+            'similarProperties' => $similarProperties,
         ]);
     }
 

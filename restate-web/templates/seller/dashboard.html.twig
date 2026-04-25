@@ -96,7 +96,7 @@
                         <tr>
                             <td>
                                 <div class="prop-row-info">
-                                    <img src="{{ asset(prop.image) }}" class="prop-row-img">
+                                    <img src="{{ prop.image ? asset(prop.image) : asset('images/japan.png') }}" class="prop-row-img">
                                     <div>
                                         <p class="prop-row-name">{{ prop.title }}</p>
                                         <p class="prop-row-addr">{{ prop.city }}, {{ prop.state }}</p>
@@ -104,11 +104,11 @@
                                 </div>
                             </td>
                             <td>
-                                <span style="font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#666876;">{{ prop.category.name }}</span>
+                                <span style="font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#666876;">{{ prop.category ? prop.category.name : 'No Category' }}</span>
                             </td>
                             <td>
-                                <span class="prop-status status-{{ prop.status }}">
-                                    {{ prop.status|capitalize }}
+                                <span class="prop-status status-{{ prop.status|default('available') }}">
+                                    {{ prop.status|default('available')|capitalize }}
                                 </span>
                             </td>
                             <td>
@@ -148,10 +148,10 @@
                 {% for booking in bookings %}
                     <div class="booking-card">
                         <div class="booking-header">
-                            <span class="booking-user">{{ booking.user.name }}</span>
-                            <span class="booking-date">{{ booking.visitDate|date('M d, H:i') }}</span>
+                            <span class="booking-user">{{ booking.user ? booking.user.name : 'Unknown User' }}</span>
+                            <span class="booking-date">{{ booking.visitDate ? booking.visitDate|date('M d, H:i') : 'No Date' }}</span>
                         </div>
-                        <p class="booking-prop">Property: <strong>{{ booking.property.title }}</strong></p>
+                        <p class="booking-prop">Property: <strong>{{ booking.property ? booking.property.title : 'Deleted Property' }}</strong></p>
                         
                         {% if booking.message %}
                             <p class="booking-msg">"{{ booking.message }}"</p>

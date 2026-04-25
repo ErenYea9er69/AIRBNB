@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ is_edit ? 'Edit' : 'Add' }} Property - Real Scout{% endblock %}
+{% block title %}{{ is_edit|default(false) ? 'Edit' : 'Add' }} Property - Real Scout{% endblock %}
 
 {% block body %}
 <style>
@@ -111,7 +111,7 @@
             </div>
 
             <button type="submit" class="form-btn">
-                {{ is_edit ? 'Update Listing' : 'Publish Property' }}
+                {{ is_edit|default(false) ? 'Update Listing' : 'Publish Property' }}
             </button>
         {{ form_end(form) }}
     </div>

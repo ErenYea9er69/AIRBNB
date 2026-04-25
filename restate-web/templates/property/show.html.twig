@@ -407,4 +407,26 @@ function toggleFavorite(propertyId, buttonElement) {
         {% endif %}
     });
 </script>
+
+{# Similar Properties #}
+{% if similarProperties|length > 0 %}
+<div style="max-width:1200px; margin:48px auto; padding:0 48px;">
+    <h2 class="section-title" style="font-size:24px; margin-bottom:24px;">Similar Properties</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px;">
+        {% for item in similarProperties %}
+            <a href="{{ path('app_property_show', {id: item.id}) }}" class="listing-card" style="text-decoration:none;">
+                <div class="listing-img" style="height:180px;">
+                    <img src="{{ asset(item.image) }}" alt="{{ item.title }}">
+                    <div class="listing-type" style="top:10px; left:10px;">For {{ item.listingType|capitalize }}</div>
+                </div>
+                <div class="listing-info">
+                    <h3 class="listing-title" style="font-size:16px;">{{ item.title }}</h3>
+                    <p style="font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin:4px 0 0;">{{ item.address }}</p>
+                    <p class="listing-price" style="font-size:18px;">${{ item.price|number_format }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}

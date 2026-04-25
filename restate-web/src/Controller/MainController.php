@@ -45,7 +45,7 @@ class MainController extends AbstractController
         $qb = $propertyRepository->createQueryBuilder('p');
 
         if ($query) {
-            $qb->andWhere('p.title LIKE :query OR p.address LIKE :query')
+            $qb->andWhere('p.title LIKE :query OR p.address LIKE :query OR p.city LIKE :query OR p.state LIKE :query')
                ->setParameter('query', '%' . $query . '%');
         }
 
