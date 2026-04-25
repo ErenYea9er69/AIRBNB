@@ -2,6 +2,15 @@
 
 {% block title %}{{ property.title }} - Real Scout{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{% endblock %}
+
 
 
 {% block body %}
@@ -179,18 +188,20 @@
         <div class="section-divider">
             <h2 class="section-title">Listed By</h2>
             <div class="agent-row">
-                <div class="agent-info">
+                <a href="{{ path('app_agent_show', {id: property.agent.id}) }}" class="agent-info" style="text-decoration:none;">
                     <div class="agent-avatar">
-                        <img src="{{ asset(property.agent.avatar|default('images/japan.png')) }}">
+                        <img src="{{ property.agent.avatar ? asset(property.agent.avatar) : asset('images/avatar.png') }}">
                     </div>
                     <div>
                         <p class="agent-name">{{ property.agent.name|default('Real Scout Agent') }}</p>
-                        <p class="agent-role">Owner & Sales Manager</p>
+                        <p class="agent-role">Professional Real Estate Agent</p>
                     </div>
-                </div>
+                </a>
                 <div class="agent-actions">
-                    <a href="#" class="agent-action-btn"><img src="{{ asset('icons/chat.png') }}"></a>
-                    <a href="#" class="agent-action-btn"><img src="{{ asset('icons/phone.png') }}"></a>
+                    <a href="mailto:{{ property.agent.email }}" class="agent-action-btn"><img src="{{ asset('icons/chat.png') }}"></a>
+                    {% if property.agent.phone %}
+                        <a href="tel:{{ property.agent.phone }}" class="agent-action-btn"><img src="{{ asset('icons/phone.png') }}"></a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -207,6 +218,16 @@
         </div>
         {% endif %}
 
+        {# Map Location #}
+        <div class="section-divider">
+            <h2 class="section-title">Location</h2>
+            <p style="font-family:'Rubik',sans-serif; font-size:14px; color:#8C8E98; margin-bottom:16px;">{{ property.address }}, {{ property.city }}, {{ property.state }}</p>
+            <div id="map" style="height:400px; width:100%; border-radius:20px; border:1px solid rgba(0,97,255,0.06); overflow:hidden; background:#f8f9fc;"></div>
+            {% if not property.latitude or not property.longitude %}
+                <div style="text-align:center; padding:20px; color:#8C8E98; font-style:italic; font-size:13px;">Coordinates not set for this property. Showing general area.</div>
+            {% endif %}
+        </div>
+
         {# Reviews #}
         <div class="section-divider">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
@@ -215,6 +236,32 @@
                     <h2 class="section-title" style="margin:0;">{{ property.rating }} ({{ property.reviews|length }} reviews)</h2>
                 </div>
             </div>
+
+            {# Add Review Form #}
+            {% if app.user %}
+            <div style="background:#f8f9fc; border-radius:20px; padding:24px; margin-bottom:32px; border:1px solid rgba(0,97,255,0.06);">
+                <h3 style="font-family:'Rubik-Bold',sans-serif; font-size:16px; color:#191D31; margin:0 0 16px;">Leave a Review</h3>
+                <form action="{{ path('app_property_review', {id: property.id}) }}" method="POST">
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block; font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#8C8E98; margin-bottom:8px; text-transform:uppercase;">Rating</label>
+                        <select name="rating" required style="width:120px; padding:10px; border-radius:10px; border:1px solid rgba(0,97,255,0.1); font-family:'Rubik',sans-serif; outline:none;">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <textarea name="review" placeholder="Share your experience..." required 
+                                  style="width:100%; height:100px; padding:16px; border-radius:12px; border:1px solid rgba(0,97,255,0.1); font-family:'Rubik',sans-serif; font-size:14px; outline:none; resize:none; box-sizing:border-box;"></textarea>
+                    </div>
+                    <button type="submit" style="padding:12px 24px; background:#0061FF; color:white; border-radius:12px; font-family:'Rubik-Bold',sans-serif; font-size:14px; border:none; cursor:pointer; transition:all 0.2s;">
+                        Post Review
+                    </button>
+                </form>
+            </div>
+            {% endif %}
             <div style="display:flex; flex-direction:column; gap:16px;">
                 {% for review in property.reviews %}
                     <div class="review-card">
@@ -336,5 +383,28 @@ function toggleFavorite(propertyId, buttonElement) {
     })
     .catch(error => console.error('Error toggling favorite:', error));
 }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var lat = {{ property.latitude|default(34.0522) }};
+        var lng = {{ property.longitude|default(-118.2437) }};
+        
+        var map = L.map('map', {
+            center: [lat, lng],
+            zoom: 13,
+            scrollWheelZoom: false
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        {% if property.latitude and property.longitude %}
+        L.marker([lat, lng]).addTo(map)
+            .bindPopup('{{ property.title }}')
+            .openPopup();
+        {% endif %}
+    });
 </script>
 {% endblock %}

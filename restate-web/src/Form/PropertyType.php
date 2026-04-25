@@ -46,6 +46,21 @@ class PropertyType extends AbstractType
                     ])
                 ],
             ])
+            ->add('galleryFiles', FileType::class, [
+                'label' => 'Gallery Images',
+                'mapped' => false,
+                'required' => false,
+                'multiple' => true,
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\All([
+                        new File([
+                            'maxSize' => '5M',
+                            'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                            'mimeTypesMessage' => 'Please upload valid images (JPEG, PNG, WEBP)',
+                        ])
+                    ])
+                ],
+            ])
             ->add('listingType', ChoiceType::class, [
                 'choices'  => [
                     'For Sale' => 'sale',

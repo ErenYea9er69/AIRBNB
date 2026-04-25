@@ -99,5 +99,24 @@
             {% endfor %}
         </div>
     </div>
+
+    {# Top Agents #}
+    <div class="mt-10">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-rubik-bold text-black-300">Top Agents</h2>
+            <a href="#" class="text-base font-rubik-bold text-primary-300">See All</a>
+        </div>
+
+        <div class="flex flex-row gap-6 overflow-x-auto pb-4 no-scrollbar">
+            {% for agent in agents %}
+            <a href="{{ path('app_agent_show', {id: agent.id}) }}" class="flex flex-col items-center min-w-[120px] group">
+                <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary-300 transition-all duration-300">
+                    <img src="{{ agent.avatar ? asset(agent.avatar) : asset('images/avatar.png') }}" alt="{{ agent.name }}" class="w-full h-full object-cover">
+                </div>
+                <p class="mt-3 text-sm font-rubik-bold text-black-300 group-hover:text-primary-300 transition-colors">{{ agent.name|split(' ')[0] }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
 </main>
 {% endblock %}

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(PropertyRepository $propertyRepository, CategoryRepository $categoryRepository, Request $request): Response
+    public function index(PropertyRepository $propertyRepository, CategoryRepository $categoryRepository, EntityManagerInterface $entityManager, Request $request): Response
     {
         $categoryId = $request->query->get('category');
         $activeCategory = $categoryId ? $categoryRepository->find($categoryId) : null;
@@ -25,12 +25,14 @@ class MainController extends AbstractController
         $recommendations = $propertyRepository->findBy($criteria, ['rating' => 'DESC'], 10);
         
         $categories = $categoryRepository->findAll();
+        $agents = $entityManager->getRepository(\App\Entity\Agent::class)->findBy([], ['id' => 'DESC'], 5);
 
         return $this->render('main/index.html.twig', [
             'latestProperties' => $latestProperties,
             'recommendations' => $recommendations,
             'categories' => $categories,
             'activeCategoryId' => $categoryId,
+            'agents' => $agents,
         ]);
     }
 

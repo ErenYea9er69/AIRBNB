@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ agent.name }} - Real Scout{% endblock %}
+
+{% block body %}
+<style>
+    .agent-profile { max-width:1200px; margin:0 auto; padding:40px 48px; }
+    
+    .agent-hero { background:white; border-radius:24px; padding:40px; border:1px solid rgba(0,97,255,0.06); box-shadow:0 4px 24px rgba(0,0,0,0.04); display:flex; gap:40px; align-items:center; margin-bottom:48px; }
+    .agent-avatar-wrap { position:relative; }
+    .agent-avatar { width:160px; height:160px; border-radius:50%; overflow:hidden; border:4px solid white; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+    .agent-avatar img { width:100%; height:100%; object-fit:cover; }
+    .agent-verified { position:absolute; bottom:8px; right:8px; width:36px; height:36px; background:#0061FF; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid white; }
+    .agent-verified span { color:white; font-size:18px; }
+
+    .agent-meta h1 { font-family:'Rubik-Bold',sans-serif; font-size:36px; color:#191D31; margin:0; }
+    .agent-meta p { font-family:'Rubik',sans-serif; font-size:16px; color:#8C8E98; margin:8px 0 24px; }
+    
+    .agent-contact { display:flex; gap:24px; }
+    .contact-item { display:flex; align-items:center; gap:12px; padding:12px 24px; border-radius:14px; background:#f8f9fc; font-family:'Rubik-Medium',sans-serif; font-size:15px; color:#191D31; text-decoration:none; transition:all 0.2s; }
+    .contact-item:hover { background:rgba(0,97,255,0.06); color:#0061FF; }
+    .contact-item img { width:20px; height:20px; }
+
+    .agent-content { display:grid; grid-template-columns:1fr 400px; gap:48px; }
+    
+    .section-title { font-family:'Rubik-Bold',sans-serif; font-size:24px; color:#191D31; margin-bottom:24px; display:flex; align-items:center; gap:12px; }
+    .section-title span { background:rgba(0,97,255,0.08); color:#0061FF; padding:4px 14px; border-radius:10px; font-size:16px; }
+
+    .listings-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px; }
+    .listing-card { background:white; border-radius:20px; overflow:hidden; border:1px solid rgba(0,97,255,0.06); transition:all 0.3s; text-decoration:none; }
+    .listing-card:hover { transform:translateY(-8px); box-shadow:0 12px 32px rgba(0,0,0,0.08); }
+    .listing-img { height:200px; position:relative; }
+    .listing-img img { width:100%; height:100%; object-fit:cover; }
+    .listing-type { position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.9); padding:4px 12px; border-radius:8px; font-family:'Rubik-Bold',sans-serif; font-size:11px; color:#0061FF; text-transform:uppercase; }
+    .listing-info { padding:20px; }
+    .listing-title { font-family:'Rubik-Bold',sans-serif; font-size:17px; color:#191D31; margin:0; }
+    .listing-price { font-family:'Rubik-Bold',sans-serif; font-size:20px; color:#0061FF; margin-top:12px; }
+
+    .bio-card { background:white; border-radius:24px; padding:32px; border:1px solid rgba(0,97,255,0.06); height:fit-content; position:sticky; top:24px; }
+    .bio-text { font-family:'Rubik',sans-serif; font-size:15px; color:#666876; line-height:1.7; margin:0; white-space:pre-line; }
+
+    @media (max-width:900px) {
+        .agent-hero { flex-direction:column; text-align:center; }
+        .agent-contact { flex-direction:column; align-items:center; }
+        .agent-content { grid-template-columns:1fr; }
+    }
+</style>
+
+<div class="agent-profile">
+    {# ─── HERO SECTION ─── #}
+    <div class="agent-hero">
+        <div class="agent-avatar-wrap">
+            <div class="agent-avatar">
+                <img src="{{ agent.avatar ? asset(agent.avatar) : asset('images/avatar.png') }}" alt="{{ agent.name }}">
+            </div>
+            <div class="agent-verified">
+                <span>✓</span>
+            </div>
+        </div>
+        <div class="agent-meta">
+            <h1>{{ agent.name }}</h1>
+            <p>Professional Real Estate Agent • {{ properties|length }} Listings</p>
+            <div class="agent-contact">
+                <a href="mailto:{{ agent.email }}" class="contact-item">
+                    <img src="{{ asset('icons/bell.png') }}" style="filter:none;"> {# Placeholder for email icon #}
+                    {{ agent.email }}
+                </a>
+                {% if agent.phone %}
+                <a href="tel:{{ agent.phone }}" class="contact-item">
+                    <img src="{{ asset('icons/phone.png') }}" style="filter:none;">
+                    {{ agent.phone }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ─── CONTENT SECTION ─── #}
+    <div class="agent-content">
+        {# Left: Listings #}
+        <div class="agent-listings">
+            <h2 class="section-title">Active Listings <span>{{ properties|length }}</span></h2>
+            <div class="listings-grid">
+                {% for prop in properties %}
+                <a href="{{ path('app_property_show', {id: prop.id}) }}" class="listing-card">
+                    <div class="listing-img">
+                        <img src="{{ asset(prop.image) }}" alt="{{ prop.title }}">
+                        <div class="listing-type">For {{ prop.listingType|capitalize }}</div>
+                    </div>
+                    <div class="listing-info">
+                        <h3 class="listing-title">{{ prop.title }}</h3>
+                        <p style="font-family:'Rubik',sans-serif; font-size:13px; color:#8C8E98; margin:4px 0 0;">{{ prop.address }}</p>
+                        <p class="listing-price">${{ prop.price|number_format }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Right: Bio #}
+        <div class="agent-sidebar">
+            <div class="bio-card">
+                <h2 class="section-title">About {{ agent.name|split(' ')[0] }}</h2>
+                <p class="bio-text">
+                    {{ agent.bio|default("This agent hasn't added a biography yet. With years of experience in the real estate market, " ~ agent.name ~ " is dedicated to helping clients find their perfect homes.") }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

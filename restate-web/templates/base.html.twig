@@ -137,10 +137,33 @@
                         <a href="{{ path('app_seller_dashboard') }}" class="header-link {{ app.request.attributes.get('_route') starts with 'app_seller' ? 'active' : '' }}">Dashboard</a>
                     {% endif %}
                 </nav>
-                <a href="{{ path('app_profile') }}" class="header-user">
-                    <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" class="header-avatar">
-                    <span style="font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31;">{{ app.user.name }}</span>
-                </a>
+                <div style="display:flex; align-items:center; gap:20px;">
+                    {# Notification Bell #}
+                    <a href="{{ is_granted('ROLE_SELLER') ? path('app_seller_dashboard') : path('app_profile') }}" style="position:relative; display:flex; align-items:center;">
+                        <img src="{{ asset('icons/bell.png') }}" style="width:24px; height:24px; opacity:0.8;">
+                        {% set pending_count = 0 %}
+                        {% if is_granted('ROLE_SELLER') and app.user.agent %}
+                            {% for prop in app.user.agent.properties %}
+                                {% for b in prop.bookings %}
+                                    {% if b.status == 'pending' %}{% set pending_count = pending_count + 1 %}{% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            {% for b in app.user.bookings %}
+                                {% if b.status == 'confirmed' %}{% set pending_count = pending_count + 1 %}{% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if pending_count > 0 %}
+                            <span style="position:absolute; top:-2px; right:-2px; width:10px; height:10px; background:#F75555; border-radius:50%; border:2px solid white;"></span>
+                        {% endif %}
+                    </a>
+
+                    <a href="{{ path('app_profile') }}" class="header-user">
+                        <img src="{{ app.user.agent and app.user.agent.avatar ? asset(app.user.agent.avatar) : (app.user.avatar ? asset(app.user.avatar) : asset('images/avatar.png')) }}" class="header-avatar">
+                        <span style="font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31;">{{ app.user.name }}</span>
+                    </a>
+                </div>
             </header>
             {% endif %}
 

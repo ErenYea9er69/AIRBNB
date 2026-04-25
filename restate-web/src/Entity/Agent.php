@@ -24,6 +24,12 @@ class Agent
     #[ORM\Column(length: 255)]
     private ?string $avatar = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $phone = null;
+
     #[ORM\OneToOne(inversedBy: 'agent', targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
@@ -119,6 +125,28 @@ class Agent
     {
         $this->user = $user;
 
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
         return $this;
     }
 }

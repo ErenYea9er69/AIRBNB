@@ -87,6 +87,30 @@ class SellerController extends AbstractController
             }
 
             $property->setAgent($agent);
+
+            // Handle Gallery Images
+            $galleryFiles = $form->get('galleryFiles')->getData();
+            if ($galleryFiles) {
+                foreach ($galleryFiles as $file) {
+                    $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                    try {
+                        $file->move(
+                            $this->getParameter('kernel.project_dir').'/public/uploads/properties',
+                            $newFilename
+                        );
+                        
+                        $gallery = new \App\Entity\Gallery();
+                        $gallery->setImage('uploads/properties/'.$newFilename);
+                        $gallery->setProperty($property);
+                        $entityManager->persist($gallery);
+                    } catch (FileException $e) {
+                        // handle exception
+                    }
+                }
+            }
             
             $entityManager->persist($property);
             $entityManager->flush();
@@ -128,6 +152,30 @@ class SellerController extends AbstractController
                     $property->setImage('uploads/properties/'.$newFilename);
                 } catch (FileException $e) {
                     // handle exception
+                }
+            }
+
+            // Handle Gallery Images
+            $galleryFiles = $form->get('galleryFiles')->getData();
+            if ($galleryFiles) {
+                foreach ($galleryFiles as $file) {
+                    $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                    try {
+                        $file->move(
+                            $this->getParameter('kernel.project_dir').'/public/uploads/properties',
+                            $newFilename
+                        );
+                        
+                        $gallery = new \App\Entity\Gallery();
+                        $gallery->setImage('uploads/properties/'.$newFilename);
+                        $gallery->setProperty($property);
+                        $entityManager->persist($gallery);
+                    } catch (FileException $e) {
+                        // handle exception
+                    }
                 }
             }
 
