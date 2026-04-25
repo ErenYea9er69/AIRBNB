@@ -67,6 +67,16 @@ class PropertyType extends AbstractType
                     'For Rent' => 'rent',
                 ],
             ])
+            ->add('latitude', NumberType::class, [
+                'required' => false,
+                'scale' => 7,
+                'attr' => ['step' => 'any']
+            ])
+            ->add('longitude', NumberType::class, [
+                'required' => false,
+                'scale' => 7,
+                'attr' => ['step' => 'any']
+            ])
             ->add('status', ChoiceType::class, [
                 'choices'  => [
                     'Available' => 'available',

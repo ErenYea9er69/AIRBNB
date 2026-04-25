@@ -20,6 +20,11 @@
     .type-buyer { background:rgba(34,197,94,0.08); color:#22c55e; }
     .type-seller { background:rgba(0,97,255,0.08); color:#0061FF; }
     .type-admin { background:rgba(247,85,85,0.08); color:#F75555; }
+    
+    .status-pending { background:rgba(255,193,7,0.08); color:#ffc107; }
+    .status-confirmed { background:rgba(0,97,255,0.08); color:#0061FF; }
+    .status-cancelled { background:rgba(247,85,85,0.08); color:#F75555; }
+    
     .profile-stats { display:flex; gap:24px; margin-top:20px; }
     .stat-item { text-align:center; padding:12px 20px; background:#f8f9fc; border-radius:14px; min-width:90px; }
     .stat-value { font-family:'Rubik-Bold',sans-serif; font-size:22px; font-weight:700; color:#191D31; }
@@ -177,32 +182,36 @@
             </div>
 
             {# Quick Menu #}
-            <div class="content-card" style="margin-bottom:24px;">
+            <div class="content-card" style="margin-bottom:24px;" id="bookings">
                 <h2 class="content-title">Quick Access</h2>
-                <div class="menu-row">
-                    <div class="menu-row-left">
-                        <div class="menu-row-icon" style="background:rgba(0,97,255,0.08);">
-                            <img src="{{ asset('icons/calendar.png') }}">
+                <a href="#bookings" style="text-decoration:none; color:inherit; display:block;">
+                    <div class="menu-row">
+                        <div class="menu-row-left">
+                            <div class="menu-row-icon" style="background:rgba(0,97,255,0.08);">
+                                <img src="{{ asset('icons/calendar.png') }}">
+                            </div>
+                            <span class="menu-row-label">My Visit Requests</span>
                         </div>
-                        <span class="menu-row-label">My Bookings</span>
+                        <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
                     </div>
-                    <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
-                </div>
-                <div class="menu-row">
-                    <div class="menu-row-left">
-                        <div class="menu-row-icon" style="background:rgba(34,197,94,0.08);">
-                            <img src="{{ asset('icons/wallet.png') }}">
+                </a>
+                <a href="#saved" style="text-decoration:none; color:inherit; display:block;">
+                    <div class="menu-row">
+                        <div class="menu-row-left">
+                            <div class="menu-row-icon" style="background:rgba(34,197,94,0.08);">
+                                <img src="{{ asset('icons/heart.png') }}">
+                            </div>
+                            <span class="menu-row-label">Saved Properties</span>
                         </div>
-                        <span class="menu-row-label">Payments</span>
+                        <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
                     </div>
-                    <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
-                </div>
-                <div class="menu-row">
+                </a>
+                <div class="menu-row" style="opacity:0.5; cursor:not-allowed;">
                     <div class="menu-row-left">
                         <div class="menu-row-icon" style="background:rgba(247,85,85,0.08);">
                             <img src="{{ asset('icons/bell.png') }}">
                         </div>
-                        <span class="menu-row-label">Notifications</span>
+                        <span class="menu-row-label">Payment History (Coming Soon)</span>
                     </div>
                     <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
                 </div>

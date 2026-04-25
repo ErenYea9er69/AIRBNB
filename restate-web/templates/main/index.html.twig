@@ -4,6 +4,16 @@
 
 {% block body %}
 <main class="max-w-7xl mx-auto px-6 py-10 pb-32 md:pb-10">
+    {# Welcome Header #}
+    <div class="mt-4">
+        {% if app.user %}
+            <p class="text-base font-rubik text-black-100">Welcome back,</p>
+            <h1 class="text-3xl font-rubik-bold text-black-300 mt-1">{{ app.user.name }}!</h1>
+        {% else %}
+            <p class="text-base font-rubik text-black-100">Good morning,</p>
+            <h1 class="text-3xl font-rubik-bold text-black-300 mt-1">Let's find your dream home</h1>
+        {% endif %}
+    </div>
     {# Search #}
     <div class="mt-8">
         <form action="{{ path('app_explore') }}" method="GET" class="flex flex-row items-center justify-between w-full px-4 rounded-xl bg-accent-100 border border-primary-200 py-4 shadow-sm">
@@ -79,10 +89,13 @@
             {% for item in recommendations %}
                 <a href="{{ path('app_property_show', {id: item.id}) }}" class="flex flex-col items-start bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
                     <div class="w-full h-40 relative rounded-xl overflow-hidden">
-                         <img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                         <div class="absolute top-3 right-3 flex flex-row items-center bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
-                            <img src="{{ asset('icons/star.png') }}" class="w-3 h-3">
-                            <span class="text-[10px] font-rubik-bold text-primary-300 ml-1">{{ item.rating }}</span>
+                          <img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                          <div class="absolute top-3 left-3 bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
+                             <span class="text-[10px] font-rubik-bold text-primary-300 uppercase">{{ item.listingType|default('Sale') }}</span>
+                          </div>
+                          <div class="absolute top-3 right-3 flex flex-row items-center bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
+                             <img src="{{ asset('icons/star.png') }}" class="w-3 h-3">
+                             <span class="text-[10px] font-rubik-bold text-primary-300 ml-1">{{ item.rating }}</span>
                         </div>
                     </div>
 

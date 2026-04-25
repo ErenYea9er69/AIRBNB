@@ -35,8 +35,10 @@
     </a>
 
     <div class="form-card">
-        <h1 class="form-title">{{ is_edit ? 'Edit' : 'List a New' }} Property</h1>
-        <p class="form-subtitle">Fill in the details below to {{ is_edit ? 'update your' : 'publish your new' }} listing.</p>
+        {% block form_header %}
+            <h1 class="form-title">Property Form</h1>
+            <p class="form-subtitle">Fill in the details below.</p>
+        {% endblock %}
 
         {{ form_start(form) }}
             <div class="form-grid">
@@ -80,14 +82,27 @@
                     <label class="form-label">Listing Type</label>
                     {{ form_widget(form.listingType, {'attr': {'class': 'form-input'}}) }}
                 </div>
+                <div class="form-field">
+                    <label class="form-label">Latitude</label>
+                    {{ form_widget(form.latitude, {'attr': {'class': 'form-input', 'placeholder': 'e.g. 34.0522'}}) }}
+                </div>
+                <div class="form-field">
+                    <label class="form-label">Longitude</label>
+                    {{ form_widget(form.longitude, {'attr': {'class': 'form-input', 'placeholder': 'e.g. -118.2437'}}) }}
+                </div>
                 <div class="form-field form-full">
                     <label class="form-label">Description</label>
                     {{ form_widget(form.description, {'attr': {'class': 'form-input', 'style': 'height:120px; resize:none;', 'placeholder': 'Tell buyers more about this property...'}}) }}
                 </div>
                 <div class="form-field form-full">
-                    <label class="form-label">Property Image</label>
+                    <label class="form-label">Property Main Image</label>
                     {{ form_widget(form.imageFile, {'attr': {'class': 'form-input'}}) }}
                     <p class="help-text">Upload a high-quality main image for your listing. JPG, PNG or WEBP (Max 5MB).</p>
+                </div>
+                <div class="form-field form-full">
+                    <label class="form-label">Gallery Images</label>
+                    {{ form_widget(form.galleryFiles, {'attr': {'class': 'form-input'}}) }}
+                    <p class="help-text">Select multiple images to show more details of your property.</p>
                 </div>
                 <div class="form-field">
                     <label class="form-label">Availability Status</label>

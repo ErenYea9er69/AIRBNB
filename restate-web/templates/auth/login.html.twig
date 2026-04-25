@@ -125,7 +125,7 @@
                            placeholder="Enter your password">
                 </div>
 
-                <a href="#" class="auth-forgot">Forgot password?</a>
+                <a href="javascript:void(0)" class="auth-forgot" style="opacity:0.5; cursor:default;" onclick="alert('Password reset is coming soon! Please contact support if you need immediate assistance.')">Forgot password?</a>
 
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 

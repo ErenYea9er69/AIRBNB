@@ -27,6 +27,8 @@
     .prop-status { display:inline-block; padding:4px 12px; border-radius:8px; font-family:'Rubik-Medium',sans-serif; font-size:11px; text-transform:uppercase; font-weight:500; }
     .status-available { background:rgba(34,197,94,0.08); color:#22c55e; }
     .status-pending { background:rgba(255,193,7,0.08); color:#ffc107; }
+    .status-confirmed { background:rgba(0,97,255,0.08); color:#0061FF; }
+    .status-cancelled { background:rgba(247,85,85,0.08); color:#F75555; }
     .status-sold { background:rgba(247,85,85,0.08); color:#F75555; }
     
     .action-btn { width:36px; height:36px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.2s; border:none; cursor:pointer; }
@@ -63,6 +65,14 @@
             <span>+</span> List New Property
         </a>
     </div>
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div style="padding:16px 20px; border-radius:12px; font-family:'Rubik-Medium',sans-serif; font-size:14px; margin-bottom:24px; background:{{ label == 'success' ? 'rgba(34,197,94,0.08)' : 'rgba(247,85,85,0.08)' }}; color:{{ label == 'success' ? '#22c55e' : '#F75555' }}; border:1px solid {{ label == 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(247,85,85,0.15)' }};">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
 
     <div class="dash-grid">
         {# ─── LEFT: My Listings ─── #}

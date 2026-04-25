@@ -124,8 +124,7 @@
     <body style="background:#f8f9fc; min-height:100vh; margin:0; font-family:'Rubik',sans-serif;">
         <div style="display:flex; flex-direction:column; min-height:100vh;">
             
-            {# TOP HEADER (Desktop Only) #}
-            {% if app.user %}
+            {# TOP HEADER (Desktop - Always Visible) #}
             <header class="main-header">
                 <a href="{{ path('app_home') }}" class="header-logo">
                     <span>🏠</span> Real Scout
@@ -137,6 +136,8 @@
                         <a href="{{ path('app_seller_dashboard') }}" class="header-link {{ app.request.attributes.get('_route') starts with 'app_seller' ? 'active' : '' }}">Dashboard</a>
                     {% endif %}
                 </nav>
+
+                {% if app.user %}
                 <div style="display:flex; align-items:center; gap:20px;">
                     {# Notification Bell #}
                     <a href="{{ is_granted('ROLE_SELLER') ? path('app_seller_dashboard') : path('app_profile') }}" style="position:relative; display:flex; align-items:center;">
@@ -160,12 +161,17 @@
                     </a>
 
                     <a href="{{ path('app_profile') }}" class="header-user">
-                        <img src="{{ app.user.agent and app.user.agent.avatar ? asset(app.user.agent.avatar) : (app.user.avatar ? asset(app.user.avatar) : asset('images/avatar.png')) }}" class="header-avatar">
+                        <img src="{{ app.user.agent and app.user.agent.avatar ? asset(app.user.agent.avatar) : asset('images/avatar.png') }}" class="header-avatar">
                         <span style="font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31;">{{ app.user.name }}</span>
                     </a>
                 </div>
+                {% else %}
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <a href="{{ path('app_login') }}" style="padding:10px 24px; font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#0061FF; text-decoration:none; border-radius:12px; transition:all 0.2s; border:1.5px solid rgba(0,97,255,0.15);">Sign In</a>
+                    <a href="{{ path('app_register') }}" style="padding:10px 24px; background:#0061FF; color:white; font-family:'Rubik-Bold',sans-serif; font-size:14px; text-decoration:none; border-radius:12px; box-shadow:0 4px 12px rgba(0,97,255,0.25); transition:all 0.2s;">Get Started</a>
+                </div>
+                {% endif %}
             </header>
-            {% endif %}
 
             <div style="flex:1;">
                 {% block body %}{% endblock %}
