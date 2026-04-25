@@ -2,69 +2,217 @@
 
 {% block title %}Profile - Real Scout{% endblock %}
 
+{% block footer_nav %}{% endblock %}
+
 {% block body %}
-<main class="max-w-7xl mx-auto px-6 py-10 pb-32 md:pb-10">
-    <div class="flex flex-row items-center justify-between mb-8">
-        <h1 class="text-xl font-rubik-bold text-black-300">Profile</h1>
-        <div class="w-6 h-6">
-            <img src="{{ asset('icons/bell.png') }}" alt="bell" class="w-full h-full">
-        </div>
-    </div>
+<style>
+    .profile-page { max-width:1100px; margin:0 auto; padding:40px 48px 80px; }
+    .profile-header { display:flex; align-items:flex-start; gap:40px; padding:40px; background:white; border-radius:24px; box-shadow:0 4px 24px rgba(0,0,0,0.05); border:1px solid rgba(0,97,255,0.06); }
+    .profile-avatar-wrap { position:relative; flex-shrink:0; }
+    .profile-avatar { width:120px; height:120px; border-radius:50%; overflow:hidden; border:4px solid white; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+    .profile-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .profile-badge { position:absolute; bottom:4px; right:4px; width:32px; height:32px; border-radius:50%; background:#0061FF; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,97,255,0.4); border:3px solid white; }
+    .profile-badge img { width:14px; height:14px; filter:brightness(10); }
+    .profile-info { flex:1; }
+    .profile-name { font-family:'Rubik-Bold',sans-serif; font-size:28px; font-weight:700; color:#191D31; margin:0; }
+    .profile-email { font-family:'Rubik',sans-serif; font-size:15px; color:#8C8E98; margin:6px 0 0; }
+    .profile-type-badge { display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:6px 16px; border-radius:20px; font-family:'Rubik-Medium',sans-serif; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:1.2px; }
+    .type-buyer { background:rgba(34,197,94,0.08); color:#22c55e; }
+    .type-seller { background:rgba(0,97,255,0.08); color:#0061FF; }
+    .type-admin { background:rgba(247,85,85,0.08); color:#F75555; }
+    .profile-stats { display:flex; gap:24px; margin-top:20px; }
+    .stat-item { text-align:center; padding:12px 20px; background:#f8f9fc; border-radius:14px; min-width:90px; }
+    .stat-value { font-family:'Rubik-Bold',sans-serif; font-size:22px; font-weight:700; color:#191D31; }
+    .stat-label { font-family:'Rubik',sans-serif; font-size:11px; color:#8C8E98; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+    .profile-actions { display:flex; gap:12px; margin-left:auto; align-self:flex-start; }
+    .profile-action-btn { display:flex; align-items:center; gap:8px; padding:12px 24px; border-radius:14px; font-family:'Rubik-Medium',sans-serif; font-size:14px; font-weight:500; text-decoration:none; border:none; cursor:pointer; transition:all 0.25s; }
+    .btn-primary { background:#0061FF; color:white; box-shadow:0 4px 12px rgba(0,97,255,0.25); }
+    .btn-primary:hover { background:#0050d4; transform:translateY(-1px); }
+    .btn-outline { background:transparent; color:#191D31; border:1.5px solid rgba(0,97,255,0.15); }
+    .btn-outline:hover { border-color:#0061FF; background:rgba(0,97,255,0.04); }
+    .btn-danger-outline { background:transparent; color:#F75555; border:1.5px solid rgba(247,85,85,0.2); }
+    .btn-danger-outline:hover { background:rgba(247,85,85,0.06); }
 
-    <div class="flex flex-col items-center mt-5">
-        <div class="relative">
-            <div class="w-32 h-32 rounded-full overflow-hidden bg-primary-200 border-4 border-white shadow-lg">
-                <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar" class="w-full h-full object-cover">
-            </div>
-            <button class="absolute bottom-1 right-1 bg-primary-300 p-2 rounded-full shadow-md hover:bg-primary-300/90 transition-colors">
-                <img src="{{ asset('icons/edit.png') }}" class="w-4 h-4 brightness-200">
-            </button>
-        </div>
-        <h2 class="text-2xl font-rubik-bold text-black-300 mt-4">{{ app.user.name|default('User Name') }}</h2>
-    </div>
+    .profile-grid { display:grid; grid-template-columns:280px 1fr; gap:32px; margin-top:36px; }
+    .profile-nav { background:white; border-radius:20px; padding:8px; box-shadow:0 2px 16px rgba(0,0,0,0.04); border:1px solid rgba(0,97,255,0.06); align-self:start; position:sticky; top:24px; }
+    .nav-item { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:14px; font-family:'Rubik-Medium',sans-serif; font-size:15px; font-weight:500; color:#666876; text-decoration:none; cursor:pointer; transition:all 0.2s; margin:2px 0; }
+    .nav-item:hover { background:rgba(0,97,255,0.04); color:#191D31; }
+    .nav-item.active { background:rgba(0,97,255,0.08); color:#0061FF; }
+    .nav-item img { width:22px; height:22px; }
+    .nav-divider { height:1px; background:rgba(0,97,255,0.06); margin:8px 16px; }
 
-    <div class="mt-12 flex flex-col gap-5">
-        {# Settings Section #}
-        <div class="flex flex-col border-b border-primary-100 pb-5">
-            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
-                <div class="flex flex-row items-center">
-                    <img src="{{ asset('icons/calendar.png') }}" class="w-6 h-6">
-                    <span class="text-lg font-rubik-medium text-black-300 ml-4">My Bookings</span>
-                </div>
-                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+    .profile-content { min-width:0; }
+    .content-card { background:white; border-radius:20px; padding:32px; box-shadow:0 2px 16px rgba(0,0,0,0.04); border:1px solid rgba(0,97,255,0.06); }
+    .content-title { font-family:'Rubik-Bold',sans-serif; font-size:20px; font-weight:700; color:#191D31; margin:0 0 24px; }
+
+    .saved-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .saved-card { display:flex; gap:16px; padding:16px; background:#f8f9fc; border-radius:16px; text-decoration:none; transition:all 0.3s; }
+    .saved-card:hover { background:rgba(0,97,255,0.04); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+    .saved-card-img { width:100px; height:80px; border-radius:12px; object-fit:cover; flex-shrink:0; }
+    .saved-card-info { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
+    .saved-card-title { font-family:'Rubik-Bold',sans-serif; font-size:15px; font-weight:700; color:#191D31; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .saved-card-addr { font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin:4px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .saved-card-price { font-family:'Rubik-Bold',sans-serif; font-size:15px; font-weight:700; color:#0061FF; margin:6px 0 0; }
+
+    .menu-row { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:14px; cursor:pointer; transition:all 0.2s; }
+    .menu-row:hover { background:rgba(0,97,255,0.04); }
+    .menu-row-left { display:flex; align-items:center; gap:14px; }
+    .menu-row-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+    .menu-row-icon img { width:22px; height:22px; }
+    .menu-row-label { font-family:'Rubik-Medium',sans-serif; font-size:15px; font-weight:500; color:#191D31; }
+    .menu-row-arrow { width:18px; height:18px; opacity:0.3; transition:transform 0.2s; }
+    .menu-row:hover .menu-row-arrow { transform:translateX(3px); opacity:0.6; }
+
+    @media (max-width:900px) {
+        .profile-page { padding:24px 20px 100px; }
+        .profile-header { flex-direction:column; align-items:center; text-align:center; padding:28px 24px; }
+        .profile-actions { margin:20px auto 0; }
+        .profile-stats { justify-content:center; }
+        .profile-grid { grid-template-columns:1fr; }
+        .profile-nav { position:static; }
+        .saved-grid { grid-template-columns:1fr; }
+    }
+</style>
+
+<div class="profile-page">
+
+    {# ═══════════ PROFILE HEADER ═══════════ #}
+    <div class="profile-header">
+        <div class="profile-avatar-wrap">
+            <div class="profile-avatar">
+                <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar">
             </div>
-            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
-                <div class="flex flex-row items-center">
-                    <img src="{{ asset('icons/wallet.png') }}" class="w-6 h-6">
-                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Payments</span>
-                </div>
-                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+            <div class="profile-badge">
+                <img src="{{ asset('icons/edit.png') }}">
             </div>
         </div>
-
-        <div class="flex flex-col border-b border-primary-100 pb-5">
-               <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
-                <div class="flex flex-row items-center">
-                    <img src="{{ asset('icons/person.png') }}" class="w-6 h-6">
-                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Profile Settings</span>
+        <div class="profile-info">
+            <h1 class="profile-name">{{ app.user.name|default('User') }}</h1>
+            <p class="profile-email">{{ app.user.email }}</p>
+            <span class="profile-type-badge type-{{ app.user.userType|default('buyer') }}">
+                {{ app.user.userType|default('buyer')|capitalize }}
+            </span>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{ savedProperties|length }}</div>
+                    <div class="stat-label">Saved</div>
                 </div>
-                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
-            </div>
-            <div class="flex flex-row items-center justify-between py-3 cursor-pointer group">
-                <div class="flex flex-row items-center">
-                    <img src="{{ asset('icons/bell.png') }}" class="w-6 h-6">
-                    <span class="text-lg font-rubik-medium text-black-300 ml-4">Notifications</span>
+                {% if is_granted('ROLE_SELLER') and app.user.agent %}
+                <div class="stat-item">
+                    <div class="stat-value">{{ app.user.agent.properties|length }}</div>
+                    <div class="stat-label">Listings</div>
                 </div>
-                <img src="{{ asset('icons/right-arrow.png') }}" class="w-5 h-5 opacity-40 group-hover:translate-x-1 transition-transform">
+                {% endif %}
             </div>
         </div>
-
-        <div class="flex flex-col pb-5">
-            <a href="{{ path('app_logout') }}" class="flex flex-row items-center py-3 cursor-pointer group">
-                <img src="{{ asset('icons/logout.png') }}" class="w-6 h-6">
-                <span class="text-lg font-rubik-medium text-danger ml-4">Logout</span>
+        <div class="profile-actions">
+            <a href="{{ path('app_profile_settings') }}" class="profile-action-btn btn-primary">
+                <img src="{{ asset('icons/edit.png') }}" style="width:16px;height:16px;filter:brightness(10);">
+                Edit Profile
+            </a>
+            <a href="{{ path('app_logout') }}" class="profile-action-btn btn-danger-outline">
+                <img src="{{ asset('icons/logout.png') }}" style="width:16px;height:16px;">
+                Logout
             </a>
         </div>
     </div>
-</main>
+
+    {# ═══════════ TWO-COLUMN LAYOUT ═══════════ #}
+    <div class="profile-grid">
+
+        {# ─── LEFT NAV ─── #}
+        <div class="profile-nav">
+            <a href="{{ path('app_profile') }}" class="nav-item active">
+                <img src="{{ asset('icons/person.png') }}">
+                Overview
+            </a>
+            <a href="{{ path('app_profile') }}#saved" class="nav-item">
+                <img src="{{ asset('icons/heart.png') }}">
+                Saved Properties
+            </a>
+            {% if is_granted('ROLE_SELLER') %}
+            <a href="{{ path('app_seller_dashboard') }}" class="nav-item">
+                <img src="{{ asset('icons/home.png') }}">
+                My Listings
+            </a>
+            {% endif %}
+            <div class="nav-divider"></div>
+            <a href="{{ path('app_profile_settings') }}" class="nav-item">
+                <img src="{{ asset('icons/edit.png') }}">
+                Settings
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{{ path('app_logout') }}" class="nav-item" style="color:#F75555;">
+                <img src="{{ asset('icons/logout.png') }}">
+                Sign Out
+            </a>
+        </div>
+
+        {# ─── RIGHT CONTENT ─── #}
+        <div class="profile-content">
+
+            {# Quick Menu #}
+            <div class="content-card" style="margin-bottom:24px;">
+                <h2 class="content-title">Quick Access</h2>
+                <div class="menu-row">
+                    <div class="menu-row-left">
+                        <div class="menu-row-icon" style="background:rgba(0,97,255,0.08);">
+                            <img src="{{ asset('icons/calendar.png') }}">
+                        </div>
+                        <span class="menu-row-label">My Bookings</span>
+                    </div>
+                    <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
+                </div>
+                <div class="menu-row">
+                    <div class="menu-row-left">
+                        <div class="menu-row-icon" style="background:rgba(34,197,94,0.08);">
+                            <img src="{{ asset('icons/wallet.png') }}">
+                        </div>
+                        <span class="menu-row-label">Payments</span>
+                    </div>
+                    <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
+                </div>
+                <div class="menu-row">
+                    <div class="menu-row-left">
+                        <div class="menu-row-icon" style="background:rgba(247,85,85,0.08);">
+                            <img src="{{ asset('icons/bell.png') }}">
+                        </div>
+                        <span class="menu-row-label">Notifications</span>
+                    </div>
+                    <img src="{{ asset('icons/right-arrow.png') }}" class="menu-row-arrow">
+                </div>
+            </div>
+
+            {# Saved Properties #}
+            <div class="content-card" id="saved">
+                <h2 class="content-title">Saved Properties</h2>
+                {% if savedProperties|length > 0 %}
+                <div class="saved-grid">
+                    {% for item in savedProperties %}
+                    <a href="{{ path('app_property_show', {id: item.id}) }}" class="saved-card">
+                        <img src="{{ asset(item.image) }}" class="saved-card-img">
+                        <div class="saved-card-info">
+                            <p class="saved-card-title">{{ item.title }}</p>
+                            <p class="saved-card-addr">{{ item.address }}</p>
+                            <p class="saved-card-price">${{ item.price|number_format }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align:center; padding:40px 20px;">
+                    <img src="{{ asset('icons/heart.png') }}" style="width:48px;height:48px;opacity:0.2;margin:0 auto 16px;display:block;">
+                    <p style="font-family:'Rubik-Medium',sans-serif; font-size:16px; color:#8C8E98;">No saved properties yet</p>
+                    <p style="font-family:'Rubik',sans-serif; font-size:13px; color:#8C8E98; margin-top:4px;">Properties you save will appear here.</p>
+                    <a href="{{ path('app_explore') }}" style="display:inline-block; margin-top:16px; padding:12px 28px; background:#0061FF; color:white; font-family:'Rubik-Medium',sans-serif; font-size:14px; border-radius:12px; text-decoration:none; transition:all 0.25s;" 
+                       onmouseover="this.style.background='#0050d4'" onmouseout="this.style.background='#0061FF'">
+                        Explore Properties
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

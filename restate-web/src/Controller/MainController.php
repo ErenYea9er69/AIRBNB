@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Repository\PropertyRepository;
 use App\Repository\CategoryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class MainController extends AbstractController
@@ -60,6 +62,63 @@ class MainController extends AbstractController
     #[Route('/profile', name: 'app_profile')]
     public function profile(): Response
     {
-        return $this->render('main/profile.html.twig');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('main/profile.html.twig', [
+            'savedProperties' => $user->getSavedProperties(),
+        ]);
+    }
+
+    #[Route('/profile/settings', name: 'app_profile_settings', methods: ['GET', 'POST'])]
+    public function settings(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $success = null;
+        $error = null;
+
+        if ($request->isMethod('POST')) {
+            $action = $request->request->get('action');
+
+            if ($action === 'update_profile') {
+                $name = $request->request->get('name');
+                $email = $request->request->get('email');
+                if ($name) { $user->setName($name); }
+                if ($email) { $user->setEmail($email); }
+                $entityManager->flush();
+                $success = 'Profile updated successfully.';
+            }
+
+            if ($action === 'change_password') {
+                $currentPassword = $request->request->get('current_password');
+                $newPassword = $request->request->get('new_password');
+                $confirmPassword = $request->request->get('confirm_password');
+
+                if (!$userPasswordHasher->isPasswordValid($user, $currentPassword)) {
+                    $error = 'Current password is incorrect.';
+                } elseif ($newPassword !== $confirmPassword) {
+                    $error = 'New passwords do not match.';
+                } elseif (strlen($newPassword) < 8) {
+                    $error = 'Password must be at least 8 characters.';
+                } else {
+                    $user->setPassword($userPasswordHasher->hashPassword($user, $newPassword));
+                    $entityManager->flush();
+                    $success = 'Password changed successfully.';
+                }
+            }
+        }
+
+        return $this->render('main/settings.html.twig', [
+            'success' => $success,
+            'error' => $error,
+        ]);
     }
 }

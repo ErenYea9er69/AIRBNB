@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings - Real Scout{% endblock %}
+
+{% block footer_nav %}{% endblock %}
+
+{% block body %}
+<style>
+    .settings-page { max-width:800px; margin:0 auto; padding:40px 48px 80px; }
+    .settings-back { display:flex; align-items:center; gap:12px; margin-bottom:32px; text-decoration:none; color:#191D31; transition:color 0.2s; }
+    .settings-back:hover { color:#0061FF; }
+    .settings-back-btn { width:40px; height:40px; border-radius:12px; background:#f8f9fc; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+    .settings-back:hover .settings-back-btn { background:rgba(0,97,255,0.08); }
+    .settings-back img { width:16px; height:16px; }
+    .settings-back span { font-family:'Rubik-Bold',sans-serif; font-size:22px; font-weight:700; }
+
+    .settings-card { background:white; border-radius:20px; padding:32px; box-shadow:0 2px 16px rgba(0,0,0,0.04); border:1px solid rgba(0,97,255,0.06); margin-bottom:24px; }
+    .settings-card-title { font-family:'Rubik-Bold',sans-serif; font-size:18px; font-weight:700; color:#191D31; margin:0 0 8px; }
+    .settings-card-desc { font-family:'Rubik',sans-serif; font-size:13px; color:#8C8E98; margin:0 0 24px; }
+    .settings-divider { height:1px; background:rgba(0,97,255,0.06); margin:24px 0; }
+
+    .form-group { margin-bottom:20px; }
+    .form-label { display:block; font-family:'Rubik-Medium',sans-serif; font-size:13px; font-weight:500; color:#666876; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.8px; }
+    .form-input { width:100%; padding:14px 18px; background:#f8f9fc; border:1.5px solid rgba(0,97,255,0.08); border-radius:14px; font-family:'Rubik',sans-serif; font-size:15px; color:#191D31; outline:none; transition:all 0.25s; box-sizing:border-box; }
+    .form-input:focus { border-color:#0061FF; background:white; box-shadow:0 0 0 4px rgba(0,97,255,0.08); }
+    .form-input::placeholder { color:#8C8E98; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-hint { font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin-top:6px; }
+
+    .settings-btn { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; border-radius:14px; font-family:'Rubik-Bold',sans-serif; font-size:15px; font-weight:700; border:none; cursor:pointer; transition:all 0.3s; }
+    .settings-btn-primary { background:#0061FF; color:white; box-shadow:0 4px 14px rgba(0,97,255,0.25); }
+    .settings-btn-primary:hover { background:#0050d4; transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,97,255,0.35); }
+
+    .alert { padding:14px 20px; border-radius:12px; font-family:'Rubik-Medium',sans-serif; font-size:14px; font-weight:500; margin-bottom:24px; display:flex; align-items:center; gap:10px; }
+    .alert-success { background:rgba(34,197,94,0.08); color:#22c55e; border:1px solid rgba(34,197,94,0.15); }
+    .alert-error { background:rgba(247,85,85,0.08); color:#F75555; border:1px solid rgba(247,85,85,0.15); }
+
+    .account-info { display:flex; align-items:center; gap:20px; padding:20px; background:#f8f9fc; border-radius:16px; margin-bottom:24px; }
+    .account-avatar { width:64px; height:64px; border-radius:50%; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); flex-shrink:0; }
+    .account-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .account-details { flex:1; }
+    .account-name { font-family:'Rubik-Bold',sans-serif; font-size:17px; font-weight:700; color:#191D31; margin:0; }
+    .account-email { font-family:'Rubik',sans-serif; font-size:13px; color:#8C8E98; margin:3px 0 0; }
+    .account-type { display:inline-flex; margin-top:6px; padding:3px 12px; border-radius:12px; background:rgba(0,97,255,0.08); font-family:'Rubik-Medium',sans-serif; font-size:11px; color:#0061FF; font-weight:500; text-transform:uppercase; letter-spacing:1px; }
+
+    @media (max-width:768px) {
+        .settings-page { padding:24px 20px 100px; }
+        .form-row { grid-template-columns:1fr; }
+    }
+</style>
+
+<div class="settings-page">
+
+    {# Back Navigation #}
+    <a href="{{ path('app_profile') }}" class="settings-back">
+        <div class="settings-back-btn">
+            <img src="{{ asset('icons/back-arrow.png') }}">
+        </div>
+        <span>Settings</span>
+    </a>
+
+    {# Flash Messages #}
+    {% if success %}
+        <div class="alert alert-success">
+            <span>✓</span> {{ success }}
+        </div>
+    {% endif %}
+    {% if error %}
+        <div class="alert alert-error">
+            <span>✕</span> {{ error }}
+        </div>
+    {% endif %}
+
+    {# Current Account Info #}
+    <div class="account-info">
+        <div class="account-avatar">
+            <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar">
+        </div>
+        <div class="account-details">
+            <p class="account-name">{{ app.user.name }}</p>
+            <p class="account-email">{{ app.user.email }}</p>
+            <span class="account-type">{{ app.user.userType|default('buyer')|capitalize }}</span>
+        </div>
+    </div>
+
+    {# ═══════════ EDIT PROFILE ═══════════ #}
+    <div class="settings-card">
+        <h2 class="settings-card-title">Edit Profile</h2>
+        <p class="settings-card-desc">Update your personal information.</p>
+
+        <form method="post" action="{{ path('app_profile_settings') }}">
+            <input type="hidden" name="action" value="update_profile">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" value="{{ app.user.name }}" class="form-input" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" value="{{ app.user.email }}" class="form-input" placeholder="your@email.com">
+                </div>
+            </div>
+            <button type="submit" class="settings-btn settings-btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    {# ═══════════ CHANGE PASSWORD ═══════════ #}
+    <div class="settings-card">
+        <h2 class="settings-card-title">Change Password</h2>
+        <p class="settings-card-desc">For your security, we recommend using a strong, unique password.</p>
+
+        <form method="post" action="{{ path('app_profile_settings') }}">
+            <input type="hidden" name="action" value="change_password">
+            <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" name="current_password" class="form-input" placeholder="Enter current password" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="new_password" class="form-input" placeholder="Minimum 8 characters" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="form-input" placeholder="Re-enter new password" required>
+                </div>
+            </div>
+            <p class="form-hint" style="margin-bottom:20px;">Password must be at least 8 characters long.</p>
+            <button type="submit" class="settings-btn settings-btn-primary">Update Password</button>
+        </form>
+    </div>
+
+    {# ═══════════ DANGER ZONE ═══════════ #}
+    <div class="settings-card" style="border-color:rgba(247,85,85,0.15);">
+        <h2 class="settings-card-title" style="color:#F75555;">Danger Zone</h2>
+        <p class="settings-card-desc">Irreversible actions for your account.</p>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:rgba(247,85,85,0.04); border-radius:14px; border:1px solid rgba(247,85,85,0.1);">
+            <div>
+                <p style="font-family:'Rubik-Medium',sans-serif; font-size:15px; color:#191D31; font-weight:500; margin:0;">Sign out of your account</p>
+                <p style="font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin:4px 0 0;">You will be redirected to the login page.</p>
+            </div>
+            <a href="{{ path('app_logout') }}" 
+               style="padding:10px 24px; background:transparent; color:#F75555; font-family:'Rubik-Bold',sans-serif; font-size:14px; font-weight:700; border:1.5px solid rgba(247,85,85,0.3); border-radius:12px; text-decoration:none; transition:all 0.25s;"
+               onmouseover="this.style.background='rgba(247,85,85,0.06)'" onmouseout="this.style.background='transparent'">
+                Sign Out
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
