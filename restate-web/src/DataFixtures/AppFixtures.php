@@ -5,15 +5,58 @@ namespace App\DataFixtures;
 use App\Entity\Agent;
 use App\Entity\Category;
 use App\Entity\Property;
+use App\Entity\Booking;
+use App\Entity\Review;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $hasher;
+
+    public function __construct(UserPasswordHasherInterface $hasher)
+    {
+        $this->hasher = $hasher;
+    }
+
     public function load(ObjectManager $manager): void
     {
+        // 0. Users
+        $usersData = [
+            ['email' => 'admin@restate.com', 'name' => 'System Admin', 'roles' => ['ROLE_ADMIN'], 'type' => 'admin'],
+            ['email' => 'seller@restate.com', 'name' => 'Agent Smith', 'roles' => ['ROLE_SELLER'], 'type' => 'seller'],
+            ['email' => 'buyer@restate.com', 'name' => 'John Doe', 'roles' => ['ROLE_USER'], 'type' => 'buyer'],
+        ];
+
+        $buyerUser = null;
+        foreach ($usersData as $uData) {
+            $user = new \App\Entity\User();
+            $user->setEmail($uData['email']);
+            $user->setName($uData['name']);
+            $user->setRoles($uData['roles']);
+            $user->setUserType($uData['type']);
+            $user->setPassword(
+                $this->hasher->hashPassword($user, 'password')
+            );
+            $manager->persist($user);
+            
+            if ($uData['type'] === 'seller') {
+                $agent = new Agent();
+                $agent->setName($user->getName());
+                $agent->setEmail($user->getEmail());
+                $agent->setAvatar('images/avatar.png');
+                $agent->setUser($user);
+                $manager->persist($agent);
+            }
+
+            if ($uData['type'] === 'buyer') {
+                $buyerUser = $user;
+            }
+        }
+
         // 1. Categories
-        $categories = ['House', 'Condo', 'Townhouse', 'Villa', 'Apartment', 'Other'];
+        $categories = ['Premium Villa', 'Urban Loft', 'Smart Apartment', 'Coastal Estate', 'Mountain Retreat'];
         $categoryEntities = [];
         foreach ($categories as $catName) {
             $cat = new Category();
@@ -48,7 +91,7 @@ class AppFixtures extends Fixture
                 'bathrooms' => 2,
                 'rating' => 4.8,
                 'image' => 'images/japan.png',
-                'category' => 'Apartment'
+                'category' => 'Smart Apartment'
             ],
             [
                 'title' => 'La Grand Mansion',
@@ -59,7 +102,7 @@ class AppFixtures extends Fixture
                 'bathrooms' => 4,
                 'rating' => 4.9,
                 'image' => 'images/new-york.png',
-                'category' => 'Villa'
+                'category' => 'Premium Villa'
             ],
             [
                 'title' => 'Skyline Condo',
@@ -70,7 +113,7 @@ class AppFixtures extends Fixture
                 'bathrooms' => 2,
                 'rating' => 4.7,
                 'image' => 'images/japan.png',
-                'category' => 'Condo'
+                'category' => 'Urban Loft'
             ],
             [
                 'title' => 'Forest Retreat',
@@ -81,10 +124,11 @@ class AppFixtures extends Fixture
                 'bathrooms' => 1,
                 'rating' => 4.5,
                 'image' => 'images/new-york.png',
-                'category' => 'House'
+                'category' => 'Mountain Retreat'
             ],
         ];
 
+        $properties = [];
         foreach ($propertiesData as $index => $pData) {
             $prop = new Property();
             $prop->setTitle($pData['title']);
@@ -96,9 +140,29 @@ class AppFixtures extends Fixture
             $prop->setRating($pData['rating']);
             $prop->setImage($pData['image']);
             $prop->setAgent($agentEntities[$index % count($agentEntities)]);
-            $prop->setCategory($categoryEntities[$pData['category']] ?? $categoryEntities['Other']);
+            $prop->setCategory($categoryEntities[$pData['category']]);
             $prop->setDescription('This is a premium property offering luxury and comfort in a prime location.');
             $manager->persist($prop);
+            $properties[] = $prop;
+        }
+
+        // 4. Bookings
+        foreach ($properties as $index => $prop) {
+            $booking = new Booking();
+            $booking->setProperty($prop);
+            $booking->setUser($buyerUser);
+            $booking->setVisitDate(new \DateTime('+' . ($index + 1) . ' days'));
+            $booking->setMessage('I would like to visit this property.');
+            $booking->setStatus($index % 2 == 0 ? 'confirmed' : 'pending');
+            $manager->persist($booking);
+
+            // 5. Reviews
+            $review = new Review();
+            $review->setProperty($prop);
+            $review->setUser($buyerUser);
+            $review->setRating(4.5 + ($index % 5) / 10);
+            $review->setReview('Amazing property, the views are stunning and the neighborhood is very quiet.');
+            $manager->persist($review);
         }
 
         $manager->flush();

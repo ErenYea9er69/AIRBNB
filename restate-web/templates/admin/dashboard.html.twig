@@ -1,0 +1,79 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Dashboard // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Dashboard Overview</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <!-- Stats Row -->
+    <div class="card" style="grid-column: span 3;">
+        <span class="card-label">Total Portfolio</span>
+        <div class="stat-value">${{ stats.revenue|number_format(0, '.', ',') }}</div>
+        <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">Across all listings</div>
+    </div>
+    
+    <div class="card" style="grid-column: span 3;">
+        <span class="card-label">Active Users</span>
+        <div class="stat-value">{{ stats.users }}</div>
+        <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">Registered members</div>
+    </div>
+
+    <div class="card" style="grid-column: span 3;">
+        <span class="card-label">Properties</span>
+        <div class="stat-value">{{ stats.properties }}</div>
+        <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">Live on market</div>
+    </div>
+
+    <div class="card" style="grid-column: span 3;">
+        <span class="card-label">Bookings</span>
+        <div class="stat-value">{{ stats.bookings }}</div>
+        <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">Scheduled visits</div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card" style="grid-column: span 8; margin-top: 10px;">
+        <h3 style="margin-bottom: 20px; font-size: 18px;">Recent Properties</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Location</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in recentProperties %}
+                <tr>
+                    <td style="font-weight: 500;">{{ property.title }}</td>
+                    <td style="color: var(--text-dim);">{{ property.city }}, {{ property.state }}</td>
+                    <td style="color: var(--primary); font-weight: 600;">${{ property.price|number_format }}</td>
+                    <td>
+                        <span style="font-size: 11px; padding: 4px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 50px; font-weight: 600;">{{ property.status|upper }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" style="grid-column: span 4; margin-top: 10px;">
+        <h3 style="margin-bottom: 20px; font-size: 18px;">Recent Users</h3>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            {% for user in recentUsers %}
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: var(--primary-bg); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                    {{ user.name|slice(0,1)|upper }}
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 500; font-size: 14px;">{{ user.name }}</div>
+                    <div style="font-size: 12px; color: var(--text-dim);">{{ user.email }}</div>
+                </div>
+                <div style="font-size: 10px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); text-transform: uppercase;">{{ user.userType }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

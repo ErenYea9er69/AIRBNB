@@ -1,0 +1,37 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Categories // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Property Categories</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 4;">
+        <h3 style="margin-bottom: 20px; font-size: 18px;">Add Category</h3>
+        <form action="{{ path('app_admin_categories') }}" method="POST">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 8px;">Name</label>
+                <input type="text" name="name" required style="width: 100%; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px; font-family: var(--font-main); outline: none; transition: border-color 0.2s;">
+            </div>
+            <button type="submit" class="btn" style="width: 100%; padding: 14px;">Save Category</button>
+        </form>
+    </div>
+
+    <div class="card" style="grid-column: span 8;">
+        <h3 style="margin-bottom: 20px; font-size: 18px;">Existing Categories</h3>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+            {% for category in categories %}
+            <div style="padding: 15px; background: var(--primary-bg); border: 1px solid var(--border); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 600; color: var(--primary);">{{ category.name }}</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 11px; color: var(--text-dim);">ID #{{ category.id }}</span>
+                    <form action="{{ path('app_admin_category_delete', {id: category.id}) }}" method="POST" onsubmit="return confirm('Remove category and unlink properties?');">
+                        <button type="submit" style="background: transparent; border: none; color: #EF4444; font-size: 11px; cursor: pointer; text-decoration: underline;">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

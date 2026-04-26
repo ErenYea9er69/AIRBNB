@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Review Moderation // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Review Moderation</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 12;">
+        <h3 style="margin-bottom: 25px; font-size: 18px;">Public Feedback</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Reviewer</th>
+                    <th>Rating</th>
+                    <th style="width: 40%;">Comment</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td style="font-weight: 500;">{{ review.property.title }}</td>
+                    <td>
+                        <div style="font-size: 14px;">{{ review.user.name }}</div>
+                    </td>
+                    <td>
+                        <span style="color: #F59E0B; font-weight: 700;">★ {{ review.rating }}</span>
+                    </td>
+                    <td style="font-size: 13px; color: var(--text-dim); line-height: 1.4;">
+                        {{ review.review }}
+                    </td>
+                    <td style="text-align: right;">
+                        <form action="{{ path('app_admin_review_delete', {id: review.id}) }}" method="POST" onsubmit="return confirm('Remove this review?');">
+                            <button type="submit" class="btn" style="background: #F75555; padding: 8px 16px; font-size: 11px;">MODERATE</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

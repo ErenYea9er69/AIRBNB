@@ -185,6 +185,9 @@
                     {% if is_granted('ROLE_SELLER') %}
                         <a href="{{ path('app_seller_dashboard') }}" class="header-link {{ app.request.attributes.get('_route') starts with 'app_seller' ? 'active' : '' }}">Dashboard</a>
                     {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_admin_dashboard') }}" class="header-link" style="color: #ff3e3e; border: 1px solid #ff3e3e; padding: 4px 12px; border-radius: 4px;">Admin</a>
+                    {% endif %}
                 </nav>
 
                 {% if app.user %}

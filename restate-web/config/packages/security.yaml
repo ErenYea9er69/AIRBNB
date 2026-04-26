@@ -30,7 +30,13 @@ security:
                 path: app_logout
                 target: app_login
 
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_SELLER, ROLE_USER]
+        ROLE_SELLER: ROLE_USER
+
     access_control:
+         - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/seller, roles: ROLE_SELLER }
          - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

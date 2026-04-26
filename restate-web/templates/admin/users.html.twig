@@ -1,0 +1,53 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}User Operations // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>User Operations</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 12;">
+        <h3 style="margin-bottom: 25px; font-size: 18px;">Manage System Access</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>User Details</th>
+                    <th>Account Type</th>
+                    <th>System Roles</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600; font-size: 15px;">{{ user.name }}</div>
+                        <div style="font-size: 12px; color: var(--text-dim);">{{ user.email }}</div>
+                    </td>
+                    <td>
+                        <span style="text-transform: capitalize;">{{ user.userType }}</span>
+                    </td>
+                    <td>
+                        {% for role in user.roles %}
+                            <span style="font-size: 11px; padding: 4px 10px; background: {{ role == 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--primary-bg)' }}; color: {{ role == 'ROLE_ADMIN' ? 'white' : 'var(--primary)' }}; border-radius: 50px; font-weight: 600; margin-right: 5px;">{{ role }}</span>
+                        {% endfor %}
+                    </td>
+                    <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                        <form action="{{ path('app_admin_user_toggle_role', {id: user.id}) }}" method="POST">
+                            <button type="submit" class="btn" style="padding: 8px 16px; font-size: 12px; background: {{ 'ROLE_ADMIN' in user.roles ? '#F75555' : 'var(--primary)' }};">
+                                {{ 'ROLE_ADMIN' in user.roles ? 'Revoke Admin' : 'Make Admin' }}
+                            </button>
+                        </form>
+                        {% if user != app.user %}
+                        <form action="{{ path('app_admin_user_delete', {id: user.id}) }}" method="POST" onsubmit="return confirm('Purge this user node?');">
+                            <button type="submit" class="btn" style="padding: 8px 16px; font-size: 12px; background: transparent; border: 1.5px solid #EF4444; color: #EF4444;">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

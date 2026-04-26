@@ -1,0 +1,52 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Property Registry // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Property Registry</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 12;">
+        <h3 style="margin-bottom: 25px; font-size: 18px;">Platform Listings</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Listing</th>
+                    <th>Agent</th>
+                    <th>Location</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Moderation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in properties %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600; font-size: 15px;">{{ property.title }}</div>
+                        <div style="font-size: 12px; color: var(--text-dim);">{{ property.category.name }}</div>
+                    </td>
+                    <td>
+                        <div style="font-size: 14px;">{{ property.agent.name }}</div>
+                    </td>
+                    <td style="color: var(--text-dim);">
+                        {{ property.city }}, {{ property.state }}
+                    </td>
+                    <td style="font-weight: 600; color: var(--primary);">
+                        ${{ property.price|number_format }}
+                    </td>
+                    <td>
+                        <span style="font-size: 11px; padding: 4px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 50px; font-weight: 600;">{{ property.status|upper }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        <form action="{{ path('app_admin_property_delete', {id: property.id}) }}" method="POST" onsubmit="return confirm('WARNING: This will permanently remove this listing. Continue?');">
+                            <button type="submit" class="btn" style="background: #F75555; padding: 8px 16px; font-size: 12px;">DELETE LISTING</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

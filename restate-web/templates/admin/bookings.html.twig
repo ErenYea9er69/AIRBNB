@@ -1,0 +1,56 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Global Bookings // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Global Bookings</h1>{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 12;">
+        <h3 style="margin-bottom: 25px; font-size: 18px;">Interaction Schedule</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref ID</th>
+                    <th>Property</th>
+                    <th>User</th>
+                    <th>Visit Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td><span style="font-family: monospace; font-size: 12px;">#B-{{ booking.id }}</span></td>
+                    <td style="font-weight: 500;">{{ booking.property.title }}</td>
+                    <td>
+                        <div style="font-size: 14px;">{{ booking.user.name }}</div>
+                        <div style="font-size: 11px; color: var(--text-dim);">{{ booking.user.email }}</div>
+                    </td>
+                    <td style="color: var(--text-dim);">
+                        {{ booking.visitDate|date('M d, Y @ H:i') }}
+                    </td>
+                    <td>
+                        {% set color = '#F59E0B' %} {# pending #}
+                        {% if booking.status == 'confirmed' %}{% set color = '#10B981' %}{% endif %}
+                        {% if booking.status == 'cancelled' %}{% set color = '#EF4444' %}{% endif %}
+                        {% if booking.status == 'completed' %}{% set color = '#0061FF' %}{% endif %}
+                        <span style="font-size: 10px; padding: 4px 10px; border: 1px solid {{ color }}; color: {{ color }}; border-radius: 4px; font-weight: 600; text-transform: uppercase;">{{ booking.status }}</span>
+                    </td>
+                    <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                        {% if booking.status != 'confirmed' %}
+                        <form action="{{ path('app_admin_booking_status', {id: booking.id, status: 'confirmed'}) }}" method="POST">
+                            <button type="submit" style="background: transparent; border: 1px solid #10B981; color: #10B981; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">Confirm</button>
+                        </form>
+                        {% endif %}
+                        <form action="{{ path('app_admin_booking_delete', {id: booking.id}) }}" method="POST" onsubmit="return confirm('Purge this interaction record?');">
+                            <button type="submit" style="background: transparent; border: 1px solid #EF4444; color: #EF4444; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

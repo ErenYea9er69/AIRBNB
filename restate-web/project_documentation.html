@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Projet Restate - Spécifications & Diagrammes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus+Jakarta+Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 6rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--primary-glow);
+            border: 1px solid var(--primary);
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+        }
+
+        section {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        section:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 30px 60px -15px rgba(59, 130, 246, 0.2);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            width: 40px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .requirement-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .requirement-group h3 {
+            color: var(--accent);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            position: relative;
+            margin-bottom: 0.8rem;
+            color: var(--text-main);
+            padding-left: 1.5rem;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .nested-list {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .nested-list li::before {
+            content: '•';
+            color: var(--accent);
+        }
+
+        .diagram-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.4s; }
+        section:nth-child(4) { animation-delay: 0.6s; }
+        section:nth-child(5) { animation-delay: 0.8s; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="badge">Documentation Technique</div>
+            <h1>Projet Restate</h1>
+            <p>Plateforme Immobilière Intelligente & Moderne</p>
+        </header>
+
+        <section id="description">
+            <h2>1. Description du projet</h2>
+            <p>
+                Restate est une application web et mobile de pointe dédiée au marché immobilier. Elle simplifie la mise en relation entre propriétaires, agents immobiliers et acheteurs potentiels. La plateforme offre des outils avancés de recherche, de gestion d'annonces haute définition et un système intégré de prise de rendez-vous pour les visites. Conçue avec une architecture robuste, Restate garantit une expérience utilisateur fluide, sécurisée et hautement interactive.
+            </p>
+        </section>
+
+        <section id="besoins">
+            <h2>2. Spécification des besoins</h2>
+            
+            <div class="requirement-group">
+                <h3>1.1 Identification des acteurs</h3>
+                <ul>
+                    <li><strong>Administrateur :</strong> Supervise la plateforme, gère les utilisateurs et configure les paramètres globaux (catégories, équipements).</li>
+                    <li><strong>Agent / Vendeur :</strong> Publie et gère les annonces immobilières, communique avec les clients et suit les réservations.</li>
+                    <li><strong>Acheteur / Visiteur :</strong> Recherche des biens, sauvegarde ses favoris et planifie des visites physiques ou virtuelles.</li>
+                </ul>
+            </div>
+
+            <div class="requirement-group">
+                <h3>1.2 Besoins Fonctionnels</h3>
+                <p>L'application est structurée pour répondre aux besoins spécifiques de chaque profil utilisateur :</p>
+
+                <h4>Par rapport à l'Administrateur :</h4>
+                <ul>
+                    <li>Gestion des utilisateurs : Ajout, modification, consultation et suspension de comptes.</li>
+                    <li>Gestion des données de base : Configuration des catégories de biens (Appartements, Villas, Loft).</li>
+                    <li>Gestion des caractéristiques : Définition des équipements standards (Piscine, Gym, Parking).</li>
+                    <li>Surveillance : Accès aux rapports d'activité et statistiques de la plateforme.</li>
+                </ul>
+
+                <h4>Par rapport à l'Agent / Vendeur :</h4>
+                <ul>
+                    <li>Authentification & Profil : Gestion sécurisée du compte et mise à jour des informations professionnelles.</li>
+                    <li>Gestion des biens immobiliers :
+                        <ul class="nested-list">
+                            <li>Création d'annonces détaillées avec prix, localisation et description.</li>
+                            <li>Modification et mise à jour de l'état du bien (Disponible, Vendu, Loué).</li>
+                            <li>Gestion de la galerie multimédia (Photos HD, Vidéos).</li>
+                        </ul>
+                    </li>
+                    <li>Gestion des interactions : Consultation des demandes de visites et gestion du calendrier.</li>
+                </ul>
+
+                <h4>Par rapport à l'Acheteur :</h4>
+                <ul>
+                    <li>Compte Utilisateur : Inscription, connexion et gestion des préférences.</li>
+                    <li>Exploration : Recherche multicritères (Prix, Ville, Type) et filtrage avancé.</li>
+                    <li>Favoris : Sauvegarde de biens dans une liste de souhaits (Wishlist).</li>
+                    <li>Planification : Réservation de créneaux pour visiter les propriétés.</li>
+                    <li>Feedback : Publication d'avis et évaluation des agents.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="use-case">
+            <h2>3. Diagramme des cas d’utilisation</h2>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    graph TB
+                        subgraph "Plateforme Restate"
+                            UC1(Gérer Utilisateurs)
+                            UC2(Gérer Config Système)
+                            UC3(Gérer Annonces)
+                            UC4(Gérer Galerie)
+                            UC5(Réserver Visite)
+                            UC6(Gérer Favoris)
+                            UC7(Laisser Avis)
+                            UC8(S'authentifier)
+                        end
+
+                        Admin((Admin))
+                        Agent((Agent))
+                        Acheteur((Acheteur))
+
+                        Admin --> UC1
+                        Admin --> UC2
+                        Admin --> UC8
+
+                        Agent --> UC3
+                        Agent --> UC4
+                        Agent --> UC8
+                        Agent --> UC5
+
+                        Acheteur --> UC5
+                        Acheteur --> UC6
+                        Acheteur --> UC7
+                        Acheteur --> UC8
+
+                        UC1 -.->|include| UC8
+                        UC3 -.->|include| UC8
+                        UC5 -.->|include| UC8
+                </div>
+            </div>
+        </section>
+
+        <section id="classes">
+            <h2>4. Diagramme des classes</h2>
+            <div class="diagram-container">
+                <div class="mermaid">
+                    classDiagram
+                        class User {
+                            +int id
+                            +string email
+                            +string name
+                            +string userType
+                            +string roles
+                            +getRoles()
+                        }
+
+                        class Agent {
+                            +int id
+                            +string phone
+                            +string bio
+                            +string agency
+                        }
+
+                        class Property {
+                            +int id
+                            +string title
+                            +float price
+                            +string address
+                            +int bedrooms
+                            +float area
+                            +string listingType
+                            +string status
+                        }
+
+                        class Booking {
+                            +int id
+                            +datetime bookingDate
+                            +string status
+                            +string message
+                        }
+
+                        class Category {
+                            +int id
+                            +string name
+                        }
+
+                        class Feature {
+                            +int id
+                            +string name
+                        }
+
+                        class Review {
+                            +int id
+                            +int rating
+                            +string comment
+                        }
+
+                        User "1" -- "0..1" Agent : role agent
+                        User "1" -- "*" Booking : reserve
+                        Property "1" -- "*" Booking : planning
+                        Agent "1" -- "*" Property : gère
+                        Property "*" -- "1" Category : type
+                        Property "*" -- "*" Feature : possède
+                        Property "1" -- "*" Review : évalué par
+                        User "1" -- "*" Review : écrit
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Restate Architecture. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#0f172a',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#3b82f6',
+                secondaryColor: '#f59e0b',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+</body>
+</html>
