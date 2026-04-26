@@ -63,5 +63,70 @@ body {
 .font-rubik-semibold { font-family: var(--font-rubik-semibold); font-weight: 600; }
 .font-rubik-light { font-family: var(--font-rubik-light); font-weight: 300; }
 
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+html {
+    scroll-behavior: smooth;
+}
+
+/* Modern Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #FBFBFD;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 97, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid #FBFBFD;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 97, 255, 0.3);
+}
+
+/* Hide scrollbars by default for lists, show on hover */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* For modern horizontal scrollbars that look premium */
+.overflow-x-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 97, 255, 0.1) transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+    height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.overflow-x-auto:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 97, 255, 0.15);
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 97, 255, 0.4);
+}
+
+/* Firefox Support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 97, 255, 0.1) transparent;
+}

@@ -74,7 +74,7 @@
     {# Current Account Info #}
     <div class="account-info">
         <div class="account-avatar">
-            <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar">
+            <img src="{{ asset(app.user.avatar|default('images/avatar.png')) }}" alt="avatar">
         </div>
         <div class="account-details">
             <p class="account-name">{{ app.user.name }}</p>
@@ -88,7 +88,7 @@
         <h2 class="settings-card-title">Edit Profile</h2>
         <p class="settings-card-desc">Update your personal information.</p>
 
-        <form method="post" action="{{ path('app_profile_settings') }}">
+        <form method="post" action="{{ path('app_profile_settings') }}" enctype="multipart/form-data">
             <input type="hidden" name="action" value="update_profile">
             <div class="form-row">
                 <div class="form-group">
@@ -99,6 +99,11 @@
                     <label class="form-label">Email Address</label>
                     <input type="email" name="email" value="{{ app.user.email }}" class="form-input" placeholder="your@email.com">
                 </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Profile Picture</label>
+                <input type="file" name="avatar" class="form-input" accept="image/*">
+                <p class="form-hint">JPG, PNG or WEBP (Max 2MB). This will also update your agent profile if you are a seller.</p>
             </div>
             <button type="submit" class="settings-btn settings-btn-primary">Save Changes</button>
         </form>

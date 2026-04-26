@@ -68,6 +68,12 @@ class Property
     private ?Category $category = null;
 
     /**
+     * @var Collection<int, Feature>
+     */
+    #[ORM\ManyToMany(targetEntity: Feature::class, inversedBy: 'properties')]
+    private Collection $features;
+
+    /**
      * @var Collection<int, Review>
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'property', orphanRemoval: true)]
@@ -90,6 +96,7 @@ class Property
         $this->reviews = new ArrayCollection();
         $this->galleries = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->features = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -387,6 +394,29 @@ class Property
                 $booking->setProperty(null);
             }
         }
+
+        return $this;
+    }
+    /**
+     * @return Collection<int, Feature>
+     */
+    public function getFeatures(): Collection
+    {
+        return $this->features;
+    }
+
+    public function addFeature(Feature $feature): static
+    {
+        if (!$this->features->contains($feature)) {
+            $this->features->add($feature);
+        }
+
+        return $this;
+    }
+
+    public function removeFeature(Feature $feature): static
+    {
+        $this->features->removeElement($feature);
 
         return $this;
     }

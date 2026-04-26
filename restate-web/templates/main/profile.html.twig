@@ -85,7 +85,7 @@
     <div class="profile-header">
         <div class="profile-avatar-wrap">
             <div class="profile-avatar">
-                <img src="{{ app.user.avatar|default(asset('images/japan.png')) }}" alt="avatar">
+                <img src="{{ asset(app.user.avatar|default('images/avatar.png')) }}" alt="avatar">
             </div>
             <div class="profile-badge">
                 <img src="{{ asset('icons/edit.png') }}">

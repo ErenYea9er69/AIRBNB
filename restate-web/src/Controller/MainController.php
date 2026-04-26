@@ -96,6 +96,25 @@ class MainController extends AbstractController
                 $email = $request->request->get('email');
                 if ($name) { $user->setName($name); }
                 if ($email) { $user->setEmail($email); }
+
+                // Avatar Upload
+                $avatarFile = $request->files->get('avatar');
+                if ($avatarFile) {
+                    $newFilename = 'avatar-'.uniqid().'.'.$avatarFile->guessExtension();
+                    try {
+                        $avatarFile->move(
+                            $this->getParameter('kernel.project_dir').'/public/uploads/avatars',
+                            $newFilename
+                        );
+                        $user->setAvatar('uploads/avatars/'.$newFilename);
+                        
+                        // If user is an agent, sync avatar
+                        if ($user->getAgent()) {
+                            $user->getAgent()->setAvatar('uploads/avatars/'.$newFilename);
+                        }
+                    } catch (\Exception $e) {}
+                }
+
                 $entityManager->flush();
                 $success = 'Profile updated successfully.';
             }

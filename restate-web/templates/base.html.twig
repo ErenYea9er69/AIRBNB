@@ -115,6 +115,56 @@
                 .mobile-nav { display: flex; }
                 body { padding-bottom: 70px; }
             }
+
+            /* ══════════════════════════════════════════════════════════
+               MODERN SCROLLBARS
+            ══════════════════════════════════════════════════════════ */
+            html {
+                scroll-behavior: smooth;
+            }
+            
+            /* Global Vertical Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #f8f9fc;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: rgba(0, 97, 255, 0.1);
+                border-radius: 10px;
+                border: 2px solid #f8f9fc;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 97, 255, 0.25);
+            }
+
+            /* Modern Horizontal Scrollbars for Lists */
+            .overflow-x-auto::-webkit-scrollbar {
+                height: 4px;
+            }
+            .overflow-x-auto::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .overflow-x-auto::-webkit-scrollbar-thumb {
+                background: transparent;
+                border-radius: 10px;
+            }
+            .overflow-x-auto:hover::-webkit-scrollbar-thumb {
+                background: rgba(0, 97, 255, 0.1);
+            }
+            .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 97, 255, 0.3);
+            }
+
+            /* Hide Scrollbar Class */
+            .no-scrollbar::-webkit-scrollbar {
+                display: none !important;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none !important;
+                scrollbar-width: none !important;
+            }
         </style>
 
         {% block javascripts %}
@@ -161,7 +211,7 @@
                     </a>
 
                     <a href="{{ path('app_profile') }}" class="header-user">
-                        <img src="{{ app.user.agent and app.user.agent.avatar ? asset(app.user.agent.avatar) : asset('images/avatar.png') }}" class="header-avatar">
+                        <img src="{{ asset(app.user.avatar|default(app.user.agent and app.user.agent.avatar ? app.user.agent.avatar : 'images/avatar.png')) }}" class="header-avatar">
                         <span style="font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31;">{{ app.user.name }}</span>
                     </a>
                 </div>

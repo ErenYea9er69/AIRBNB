@@ -81,56 +81,58 @@
                 <h2 class="section-title">My Listings <span>{{ properties|length }}</span></h2>
                 
                 {% if properties|length > 0 %}
-                <table class="prop-table">
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for prop in properties %}
-                        <tr>
-                            <td>
-                                <div class="prop-row-info">
-                                    <img src="{{ prop.image ? asset(prop.image) : asset('images/japan.png') }}" class="prop-row-img">
-                                    <div>
-                                        <p class="prop-row-name">{{ prop.title }}</p>
-                                        <p class="prop-row-addr">{{ prop.city }}, {{ prop.state }}</p>
+                <div class="overflow-x-auto">
+                    <table class="prop-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prop in properties %}
+                            <tr>
+                                <td>
+                                    <div class="prop-row-info">
+                                        <img src="{{ prop.image ? asset(prop.image) : asset('images/japan.png') }}" class="prop-row-img">
+                                        <div>
+                                            <p class="prop-row-name">{{ prop.title }}</p>
+                                            <p class="prop-row-addr">{{ prop.city }}, {{ prop.state }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span style="font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#666876;">{{ prop.category ? prop.category.name : 'No Category' }}</span>
-                            </td>
-                            <td>
-                                <span class="prop-status status-{{ prop.status|default('available') }}">
-                                    {{ prop.status|default('available')|capitalize }}
-                                </span>
-                            </td>
-                            <td>
-                                <span style="font-family:'Rubik-Bold',sans-serif; font-size:15px; color:#191D31;">${{ prop.price|number_format }}</span>
-                            </td>
-                            <td>
-                                <div style="display:flex; gap:8px;">
-                                    <a href="{{ path('app_seller_property_edit', {id: prop.id}) }}" class="action-btn btn-edit" title="Edit">
-                                        <img src="{{ asset('icons/edit.png') }}" style="width:14px; height:14px;">
-                                    </a>
-                                    <form method="post" action="{{ path('app_seller_property_delete', {id: prop.id}) }}" onsubmit="return confirm('Delete this property?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ prop.id) }}">
-                                        <button class="action-btn btn-delete" title="Delete">
-                                            <img src="{{ asset('icons/logout.png') }}" style="width:14px; height:14px; transform:rotate(90deg);">
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                                <td>
+                                    <span style="font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#666876;">{{ prop.category ? prop.category.name : 'No Category' }}</span>
+                                </td>
+                                <td>
+                                    <span class="prop-status status-{{ prop.status|default('available') }}">
+                                        {{ prop.status|default('available')|capitalize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-family:'Rubik-Bold',sans-serif; font-size:15px; color:#191D31;">${{ prop.price|number_format }}</span>
+                                </td>
+                                <td>
+                                    <div style="display:flex; gap:8px;">
+                                        <a href="{{ path('app_seller_property_edit', {id: prop.id}) }}" class="action-btn btn-edit" title="Edit">
+                                            <img src="{{ asset('icons/edit.png') }}" style="width:14px; height:14px;">
+                                        </a>
+                                        <form method="post" action="{{ path('app_seller_property_delete', {id: prop.id}) }}" onsubmit="return confirm('Delete this property?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ prop.id) }}">
+                                            <button class="action-btn btn-delete" title="Delete">
+                                                <img src="{{ asset('icons/logout.png') }}" style="width:14px; height:14px; transform:rotate(90deg);">
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
                 <div style="text-align:center; padding:60px 20px;">
                     <p style="font-family:'Rubik-Medium',sans-serif; font-size:16px; color:#8C8E98;">You haven't listed any properties yet.</p>

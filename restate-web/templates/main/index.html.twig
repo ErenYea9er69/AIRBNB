@@ -36,7 +36,7 @@
 				<a href="{{ path('app_explore') }}" class="text-base font-rubik-bold text-primary-300">See All</a>
 			</div>
 
-			<div class="flex flex-row gap-5 overflow-x-auto pb-4 no-scrollbar">
+			<div class="flex flex-row gap-5 overflow-x-auto pb-4">
 				{% for item in latestProperties %}
 					<a href="{{ path('app_property_show', {id: item.id}) }}" class="min-w-[280px] h-[380px] relative rounded-3xl overflow-hidden cursor-pointer group">
 						<img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
@@ -67,7 +67,7 @@
 
 		{# Filter Categories #}
 		<div class="mt-8">
-			<div class="flex flex-row gap-3 overflow-x-auto no-scrollbar">
+			<div class="flex flex-row gap-3 overflow-x-auto">
 				<a href="{{ path('app_home') }}" class="px-6 py-2 rounded-full border border-primary-200 {{ not activeCategoryId ? 'bg-primary-300 text-white' : 'bg-white text-black-300' }} font-rubik-medium whitespace-nowrap">All</a>
 				{% for cat in categories %}
 					<a href="{{ path('app_home', {'category': cat.id}) }}" class="px-6 py-2 rounded-full border border-primary-200 {{ activeCategoryId == cat.id ? 'bg-primary-300 text-white' : 'bg-white text-black-300 hover:bg-primary-100/50' }} font-rubik-medium transition-colors whitespace-nowrap">{{ cat.name }}</a>
@@ -113,23 +113,24 @@
 			</div>
 		</div>
 
-		{# Top Agents #}
-		<div class="mt-10">
-			<div class="flex items-center justify-between mb-6">
-				<h2 class="text-xl font-rubik-bold text-black-300">Top Agents</h2>
-				<a href="#" class="text-base font-rubik-bold text-primary-300">See All</a>
-			</div>
+        {# Dynamic Top Agents #}
+        <div class="mt-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-rubik-bold text-black-300">Top Agents</h2>
+                <a href="{{ path('app_explore') }}" class="text-base font-rubik-bold text-primary-300">See All</a>
+            </div>
 
-			<div class="flex flex-row gap-6 overflow-x-auto pb-4 no-scrollbar">
-				{% for agent in agents %}
-					<a href="{{ path('app_agent_show', {id: agent.id}) }}" class="flex flex-col items-center min-w-[120px] group">
-						<div class="w-20 h-20 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary-300 transition-all duration-300">
-							<img src="{{ agent.avatar ? asset(agent.avatar) : asset('images/avatar.png') }}" alt="{{ agent.name }}" class="w-full h-full object-cover">
-						</div>
-						<p class="mt-3 text-sm font-rubik-bold text-black-300 group-hover:text-primary-300 transition-colors">{{ agent.name|split(' ')[0] }}</p>
-					</a>
-				{% endfor %}
-			</div>
-		</div>
+            <div class="flex flex-row gap-6 overflow-x-auto pb-4">
+                {% for agent in agents %}
+                <a href="{{ path('app_agent_show', {id: agent.id}) }}" class="flex flex-col items-center min-w-[120px] group">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-transparent group-hover:border-primary-300 transition-all duration-300 shadow-md">
+                        <img src="{{ agent.avatar ? asset(agent.avatar) : asset('images/avatar.png') }}" alt="{{ agent.name }}" class="w-full h-full object-cover">
+                    </div>
+                    <p class="mt-3 text-sm font-rubik-bold text-black-300 group-hover:text-primary-300 transition-colors">{{ agent.name|split(' ')[0] }}</p>
+                    <p class="text-[10px] font-rubik text-black-100 uppercase mt-0.5">{{ agent.properties|length }} Listings</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
 	</main>
 {% endblock %}
