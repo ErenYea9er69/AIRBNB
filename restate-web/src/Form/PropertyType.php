@@ -89,6 +89,13 @@ class PropertyType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name',
             ])
+            ->add('features', EntityType::class, [
+                'class' => \App\Entity\Feature::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+            ])
         ;
     }
 

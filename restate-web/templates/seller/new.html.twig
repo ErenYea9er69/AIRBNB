@@ -1,5 +1,12 @@
 {% extends 'seller/property_form.html.twig' %}
 {% block form_header %}
-    <h1 class="form-title">List a New Property</h1>
-    <p class="form-subtitle">Fill in the details below to publish your new listing to the marketplace.</p>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:40px;">
+        <div>
+            <h1 class="form-title">List a New Property</h1>
+            <p class="form-subtitle" style="margin-bottom:0;">Fill in the details below to publish your new listing to the marketplace.</p>
+        </div>
+        <button type="button" id="magic-fill" class="form-btn" style="background:rgba(0,97,255,0.08); color:#0061FF; box-shadow:none; margin-top:0; padding:10px 20px; font-size:13px; border:1px solid rgba(0,97,255,0.15);">
+            ✨ Magic Fill
+        </button>
+    </div>
 {% endblock %}
