@@ -79,9 +79,21 @@ class AdminController extends AbstractController
             $this->addFlash('error', 'Self-termination prohibited.');
             return $this->redirectToRoute('app_admin_users');
         }
+
+        if ($user->getAgent()) {
+            foreach ($user->getAgent()->getProperties() as $property) {
+                $em->remove($property);
+            }
+        }
+
+        $reviews = $em->getRepository(\App\Entity\Review::class)->findBy(['user' => $user]);
+        foreach ($reviews as $review) {
+            $em->remove($review);
+        }
+
         $em->remove($user);
         $em->flush();
-        $this->addFlash('success', 'User node purged.');
+        $this->addFlash('success', 'User and associated data purged.');
         return $this->redirectToRoute('app_admin_users');
     }
 

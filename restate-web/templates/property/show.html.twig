@@ -139,9 +139,7 @@
     </div>
 </div>
 
-{# ═══════════════════════════════════════════════════════════
-   TWO-COLUMN LAYOUT: Main + Sidebar
-═══════════════════════════════════════════════════════════ #}
+
 <div class="prop-layout">
 
     {# ─── LEFT COLUMN: Content ─── #}
@@ -156,7 +154,6 @@
             <span style="color:#191D31;">{{ property.title }}</span>
         </div>
 
-        {# Facilities / Features #}
         <div class="facility-grid">
             <div class="facility-card">
                 <div class="facility-icon"><img src="{{ asset('icons/bed.png') }}"></div>
@@ -178,7 +175,6 @@
             {% endfor %}
         </div>
 
-        {# Description #}
         <div class="section-divider">
             <h2 class="section-title">About this property</h2>
             <p style="font-family:'Rubik',sans-serif; font-size:15px; color:#666876; line-height:1.8; margin:0;">
@@ -186,7 +182,6 @@
             </p>
         </div>
 
-        {# Agent #}
         <div class="section-divider">
             <h2 class="section-title">Listed By</h2>
             <div class="agent-row">
@@ -208,7 +203,6 @@
             </div>
         </div>
 
-        {# Gallery #}
         {% if property.galleries|length > 0 %}
         <div class="section-divider">
             <h2 class="section-title">Gallery</h2>
@@ -220,7 +214,6 @@
         </div>
         {% endif %}
 
-        {# Map Location #}
         <div class="section-divider">
             <h2 class="section-title">Location</h2>
             <p style="font-family:'Rubik',sans-serif; font-size:14px; color:#8C8E98; margin-bottom:16px;">{{ property.address }}, {{ property.city }}, {{ property.state }}</p>
