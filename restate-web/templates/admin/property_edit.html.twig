@@ -1,0 +1,124 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Edit Property // Real Scout Admin{% endblock %}
+
+{% block header_title %}<h1>Edit Listing Moderation</h1>{% endblock %}
+
+{% block extra_css %}
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: var(--text-dim); }
+    .form-control { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); font-family: var(--font-main); outline: none; }
+    .form-control:focus { border-color: var(--primary); }
+    textarea.form-control { height: 120px; resize: vertical; }
+    
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        background: var(--bg);
+        padding: 15px;
+        border-radius: 12px;
+    }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="card" style="grid-column: span 12;">
+        <h3 style="margin-bottom: 25px; font-size: 18px;">Listing Details & Meta Data</h3>
+        
+        {{ form_start(form) }}
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form_label(form.title) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.category) }}
+                    {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.address) }}
+                {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="form-group">
+                    {{ form_label(form.city) }}
+                    {{ form_widget(form.city, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.state) }}
+                    {{ form_widget(form.state, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.price) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+                <div class="form-group">
+                    {{ form_label(form.area) }}
+                    {{ form_widget(form.area, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.bedrooms) }}
+                    {{ form_widget(form.bedrooms, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.bathrooms) }}
+                    {{ form_widget(form.bathrooms, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.status) }}
+                    {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label>Property Features</label>
+                <div class="checkbox-grid">
+                    {% for feature in form.features %}
+                        <div class="checkbox-item">
+                            {{ form_widget(feature) }}
+                            {{ form_label(feature) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form_label(form.imageFile) }}
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    <div style="margin-top: 10px;">
+                        <img src="{{ asset(property.image) }}" style="height: 100px; border-radius: 8px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.listingType) }}
+                    {{ form_widget(form.listingType, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 30px;">
+                <button type="submit" class="btn">Update Listing</button>
+                <a href="{{ path('app_admin_properties') }}" class="btn" style="background: transparent; border: 1.5px solid var(--border); color: var(--text-dim); text-decoration: none; display: flex; align-items: center; justify-content: center;">Discard Changes</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

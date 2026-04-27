@@ -7,11 +7,27 @@
 {% block body %}
 <div class="grid">
     <div class="card" style="grid-column: span 12;">
-        <h3 style="margin-bottom: 25px; font-size: 18px;">Platform Listings</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h3 style="font-size: 18px;">Platform Listings</h3>
+            
+            <form action="{{ path('app_admin_properties') }}" method="GET" style="display: flex; gap: 10px;">
+                <select name="category" class="btn" style="background: var(--surface); color: var(--text-main); border: 1px solid var(--border); padding: 8px 15px;">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {{ currentCategory == cat.id ? 'selected' : '' }}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn" style="padding: 8px 20px;">Filter</button>
+                {% if currentCategory %}
+                    <a href="{{ path('app_admin_properties') }}" class="btn" style="background: var(--primary-bg); color: var(--primary); padding: 8px 20px; text-decoration: none;">Clear</a>
+                {% endif %}
+            </form>
+        </div>
         <table>
             <thead>
                 <tr>
                     <th>Listing</th>
+                    <th>Category</th>
                     <th>Agent</th>
                     <th>Location</th>
                     <th>Value</th>
@@ -24,7 +40,9 @@
                 <tr>
                     <td>
                         <div style="font-weight: 600; font-size: 15px;">{{ property.title }}</div>
-                        <div style="font-size: 12px; color: var(--text-dim);">{{ property.category.name }}</div>
+                    </td>
+                    <td>
+                        <span style="font-size: 12px; padding: 4px 10px; background: #f0f4ff; color: var(--primary); border-radius: 50px; font-weight: 600;">{{ property.category.name|default('Uncategorized') }}</span>
                     </td>
                     <td>
                         <div style="font-size: 14px;">{{ property.agent.name }}</div>
@@ -38,9 +56,10 @@
                     <td>
                         <span style="font-size: 11px; padding: 4px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 50px; font-weight: 600;">{{ property.status|upper }}</span>
                     </td>
-                    <td style="text-align: right;">
+                    <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                        <a href="{{ path('app_admin_property_edit', {id: property.id}) }}" class="btn" style="padding: 8px 16px; font-size: 12px; background: var(--primary-bg); color: var(--primary); text-decoration: none;">EDIT</a>
                         <form action="{{ path('app_admin_property_delete', {id: property.id}) }}" method="POST" onsubmit="return confirm('WARNING: This will permanently remove this listing. Continue?');">
-                            <button type="submit" class="btn" style="background: #F75555; padding: 8px 16px; font-size: 12px;">DELETE LISTING</button>
+                            <button type="submit" class="btn" style="background: #F75555; padding: 8px 16px; font-size: 12px;">DELETE</button>
                         </form>
                     </td>
                 </tr>

@@ -69,7 +69,7 @@ class AuthController extends AbstractController
                 $agent = new Agent();
                 $agent->setName($user->getName());
                 $agent->setEmail($user->getEmail());
-                $agent->setAvatar('images/avatar.png'); // Default avatar
+                $agent->setAvatar('images/avatar.png');
                 $agent->setUser($user);
                 $entityManager->persist($agent);
             } else {

@@ -7,11 +7,15 @@ use App\Entity\Category;
 use App\Entity\Feature;
 use App\Entity\Property;
 use App\Entity\Booking;
+use App\Entity\Review;
+use App\Form\PropertyType;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\FeatureRepository;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,6 +62,32 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/user/{id}/edit', name: 'app_admin_user_edit', methods: ['GET', 'POST'])]
+    public function editUser(User $user, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    {
+        if ($request->isMethod('POST')) {
+            $user->setName($request->request->get('name'));
+            $user->setEmail($request->request->get('email'));
+            $user->setUserType($request->request->get('user_type'));
+            
+            $newPassword = $request->request->get('password');
+            if ($newPassword) {
+                $user->setPassword($hasher->hashPassword($user, $newPassword));
+            }
+
+            $roles = $request->request->all('roles');
+            $user->setRoles($roles);
+
+            $em->flush();
+            $this->addFlash('success', 'User node updated.');
+            return $this->redirectToRoute('app_admin_users');
+        }
+
+        return $this->render('admin/user_edit.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
     #[Route('/user/{id}/toggle-role', name: 'app_admin_user_toggle_role', methods: ['POST'])]
     public function toggleUserRole(User $user, EntityManagerInterface $em): Response
     {
@@ -86,7 +116,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $reviews = $em->getRepository(\App\Entity\Review::class)->findBy(['user' => $user]);
+        $reviews = $em->getRepository(Review::class)->findBy(['user' => $user]);
         foreach ($reviews as $review) {
             $em->remove($review);
         }
@@ -98,10 +128,44 @@ class AdminController extends AbstractController
     }
 
     #[Route('/properties', name: 'app_admin_properties')]
-    public function properties(PropertyRepository $propertyRepository): Response
+    public function properties(PropertyRepository $propertyRepository, CategoryRepository $categoryRepository, Request $request): Response
     {
+        $categoryId = $request->query->get('category');
+        $criteria = $categoryId ? ['category' => $categoryId] : [];
+        
         return $this->render('admin/properties.html.twig', [
-            'properties' => $propertyRepository->findAll(),
+            'properties' => $propertyRepository->findBy($criteria, ['category' => 'ASC', 'id' => 'DESC']),
+            'categories' => $categoryRepository->findAll(),
+            'currentCategory' => $categoryId,
+        ]);
+    }
+
+    #[Route('/property/{id}/edit', name: 'app_admin_property_edit', methods: ['GET', 'POST'])]
+    public function editProperty(
+        Property $property, 
+        Request $request, 
+        EntityManagerInterface $em, 
+        SluggerInterface $slugger
+    ): Response {
+        $form = $this->createForm(PropertyType::class, $property);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid().'.'.$imageFile->guessExtension();
+                $imageFile->move($this->getParameter('kernel.project_dir').'/public/uploads/properties', $newFilename);
+                $property->setImage('uploads/properties/'.$newFilename);
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Listing updated by Administrator.');
+            return $this->redirectToRoute('app_admin_properties');
+        }
+
+        return $this->render('admin/property_edit.html.twig', [
+            'property' => $property,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -136,7 +200,6 @@ class AdminController extends AbstractController
     #[Route('/category/{id}/delete', name: 'app_admin_category_delete', methods: ['POST'])]
     public function deleteCategory(Category $category, EntityManagerInterface $em, PropertyRepository $propertyRepository): Response
     {
-        // Nullify or handle properties using this category first
         $properties = $propertyRepository->findBy(['category' => $category]);
         foreach ($properties as $prop) {
             $prop->setCategory(null);
