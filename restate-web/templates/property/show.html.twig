@@ -230,7 +230,6 @@
             {% endif %}
         </div>
 
-        {# Reviews #}
         <div class="section-divider">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
                 <div style="display:flex; align-items:center; gap:8px;">
@@ -239,7 +238,6 @@
                 </div>
             </div>
 
-            {# Add Review Form #}
             {% if app.user %}
             <div style="background:#f8f9fc; border-radius:20px; padding:24px; margin-bottom:32px; border:1px solid rgba(0,97,255,0.06);">
                 <h3 style="font-family:'Rubik-Bold',sans-serif; font-size:16px; color:#191D31; margin:0 0 16px;">Leave a Review</h3>
@@ -286,7 +284,6 @@
         </div>
     </div>
 
-    {# ─── RIGHT COLUMN: Booking Sidebar ─── #}
     <div class="prop-sidebar">
         <div class="sidebar-card">
             <p class="sidebar-price-label">Price</p>
@@ -321,7 +318,6 @@
             </div>
             {% endif %}
 
-            {# Flash Messages #}
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
                     <div style="padding:12px; border-radius:10px; font-size:13px; margin-bottom:16px; font-family:'Rubik-Medium',sans-serif; 
@@ -410,7 +406,6 @@ function toggleFavorite(propertyId, buttonElement) {
     });
 </script>
 
-{# Similar Properties #}
 {% if similarProperties|length > 0 %}
 <div style="max-width:1200px; margin:48px auto; padding:0 48px;">
     <h2 class="section-title" style="font-size:24px; margin-bottom:24px;">Similar Properties</h2>

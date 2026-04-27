@@ -94,7 +94,6 @@ class PropertyController extends AbstractController
 
         $entityManager->persist($review);
 
-        // Update property average rating
         $reviews = $property->getReviews();
         $totalRating = 0;
         foreach ($reviews as $r) {

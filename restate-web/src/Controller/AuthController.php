@@ -18,6 +18,12 @@ class AuthController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return $this->redirectToRoute('app_admin_dashboard');
+            }
+            if ($this->isGranted('ROLE_SELLER')) {
+                return $this->redirectToRoute('app_seller_dashboard');
+            }
             return $this->redirectToRoute('app_home');
         }
 

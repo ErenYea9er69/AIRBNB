@@ -40,7 +40,7 @@ class MainController extends AbstractController
     public function explore(PropertyRepository $propertyRepository, Request $request): Response
     {
         $query = $request->query->get('query');
-        $filter = $request->query->get('filter', 'All'); // e.g., 'All', 'sale', 'rent'
+        $filter = $request->query->get('filter', 'All');
 
         $qb = $propertyRepository->createQueryBuilder('p');
 
@@ -97,7 +97,6 @@ class MainController extends AbstractController
                 if ($name) { $user->setName($name); }
                 if ($email) { $user->setEmail($email); }
 
-                // Avatar Upload
                 $avatarFile = $request->files->get('avatar');
                 if ($avatarFile) {
                     $newFilename = 'avatar-'.uniqid().'.'.$avatarFile->guessExtension();
@@ -108,7 +107,6 @@ class MainController extends AbstractController
                         );
                         $user->setAvatar('uploads/avatars/'.$newFilename);
                         
-                        // If user is an agent, sync avatar
                         if ($user->getAgent()) {
                             $user->getAgent()->setAvatar('uploads/avatars/'.$newFilename);
                         }
