@@ -63,7 +63,6 @@ class PropertyType extends AbstractType
             ])
             ->add('listingType', ChoiceType::class, [
                 'choices'  => [
-                    'For Sale' => 'sale',
                     'For Rent' => 'rent',
                 ],
             ])
@@ -81,7 +80,6 @@ class PropertyType extends AbstractType
                 'choices'  => [
                     'Available' => 'available',
                     'Pending' => 'pending',
-                    'Sold' => 'sold',
                     'Rented' => 'rented',
                 ],
             ])

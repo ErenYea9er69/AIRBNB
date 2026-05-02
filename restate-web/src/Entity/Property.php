@@ -16,6 +16,9 @@ class Property
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $listingType = 'rent'; 
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
