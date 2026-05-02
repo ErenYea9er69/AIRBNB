@@ -47,28 +47,7 @@ class AppSeedCommand extends Command
             $categories[] = $category;
         }
 
-        // 2. Create Features
-        $features = [];
-        $featureData = [
-            ['name' => 'WiFi', 'icon' => 'icons/wifi.png'],
-            ['name' => 'Swimming Pool', 'icon' => 'icons/swim.png'],
-            ['name' => 'Parking', 'icon' => 'icons/car-park.png'],
-            ['name' => 'Gym', 'icon' => 'icons/dumbell.png'],
-            ['name' => 'Laundry', 'icon' => 'icons/laundry.png'],
-            ['name' => 'Pet Friendly', 'icon' => 'icons/dog.png'],
-        ];
-        foreach ($featureData as $fd) {
-            $existing = $this->entityManager->getRepository(\App\Entity\Feature::class)->findOneBy(['name' => $fd['name']]);
-            if ($existing) {
-                $feature = $existing;
-            } else {
-                $feature = new \App\Entity\Feature();
-                $feature->setName($fd['name']);
-                $feature->setIcon($fd['icon']);
-                $this->entityManager->persist($feature);
-            }
-            $features[] = $feature;
-        }
+
 
         // 3. Create Users & Agents
         $users = [];
@@ -141,11 +120,7 @@ class AppSeedCommand extends Command
             $property->setAgent($agents[array_rand($agents)]);
             $property->setDescription('Experience luxury at its finest in this stunning property. Featuring modern amenities, spacious rooms, and breathtaking views, this home is perfect for those seeking comfort and style.');
             
-            // Add some features
-            $randFeatures = (array) array_rand($features, 3);
-            foreach ($randFeatures as $fIdx) {
-                $property->addFeature($features[$fIdx]);
-            }
+
 
             $this->entityManager->persist($property);
 

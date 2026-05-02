@@ -78,6 +78,13 @@ class PropertyController extends AbstractController
             throw $this->createNotFoundException('Property not found');
         }
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if ($user->getAgent() !== null && $property->getAgent() === $user->getAgent()) {
+            $this->addFlash('error', 'You cannot review your own property.');
+            return $this->redirectToRoute('app_property_show', ['id' => $id]);
+        }
+
         $rating = $request->request->get('rating');
         $comment = $request->request->get('review');
 

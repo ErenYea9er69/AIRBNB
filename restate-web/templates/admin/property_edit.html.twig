@@ -88,17 +88,7 @@
                 {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
             </div>
 
-            <div class="form-group">
-                <label>Property Features</label>
-                <div class="checkbox-grid">
-                    {% for feature in form.features %}
-                        <div class="checkbox-item">
-                            {{ form_widget(feature) }}
-                            {{ form_label(feature) }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
+
 
             <div class="form-grid">
                 <div class="form-group">

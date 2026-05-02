@@ -94,7 +94,12 @@ class MainController extends AbstractController
             if ($action === 'update_profile') {
                 $name = $request->request->get('name');
                 $email = $request->request->get('email');
-                if ($name) { $user->setName($name); }
+                if ($name) { 
+                    $user->setName($name); 
+                    if ($user->getAgent()) {
+                        $user->getAgent()->setName($name);
+                    }
+                }
                 if ($email) { $user->setEmail($email); }
 
                 $avatarFile = $request->files->get('avatar');

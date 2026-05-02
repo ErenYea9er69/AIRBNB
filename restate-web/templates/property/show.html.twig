@@ -167,12 +167,7 @@
                 <div class="facility-icon"><img src="{{ asset('icons/area.png') }}"></div>
                 <span class="facility-label">{{ property.area }} sqft</span>
             </div>
-            {% for feature in property.features %}
-                <div class="facility-card">
-                    <div class="facility-icon"><img src="{{ asset(feature.icon) }}"></div>
-                    <span class="facility-label">{{ feature.name }}</span>
-                </div>
-            {% endfor %}
+
         </div>
 
         <div class="section-divider">

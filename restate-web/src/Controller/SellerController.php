@@ -199,8 +199,21 @@ class SellerController extends AbstractController
         $agent = $user->getAgent();
         if ($property->getAgent() === $agent) {
             if ($this->isCsrfTokenValid('delete'.$property->getId(), $request->request->get('_token'))) {
-                $entityManager->remove($property);
-                $entityManager->flush();
+                $hasConfirmedBookings = false;
+                foreach ($property->getBookings() as $booking) {
+                    if ($booking->getStatus() === 'confirmed') {
+                        $hasConfirmedBookings = true;
+                        break;
+                    }
+                }
+                
+                if ($hasConfirmedBookings) {
+                    $this->addFlash('error', 'Cannot delete property with active confirmed bookings.');
+                } else {
+                    $entityManager->remove($property);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Property removed successfully.');
+                }
             }
         }
 

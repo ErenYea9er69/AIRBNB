@@ -123,17 +123,7 @@
                     {{ form_widget(form.galleryFiles, {'attr': {'class': 'form-input'}}) }}
                     <p class="help-text">Select multiple images to show more details of your property.</p>
                 </div>
-                <div class="form-field form-full">
-                    <label class="form-label">Property Features (Amenities)</label>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:12px; background:#f8f9fc; padding:20px; border-radius:14px; border:1.5px solid rgba(0,97,255,0.05);">
-                        {% for feature_field in form.features %}
-                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-family:'Rubik',sans-serif; font-size:14px; color:#191D31;">
-                                {{ form_widget(feature_field) }}
-                                {{ feature_field.vars.label }}
-                            </label>
-                        {% endfor %}
-                    </div>
-                </div>
+
                 <div class="form-field">
                     <label class="form-label">Availability Status</label>
                     {{ form_widget(form.status, {'attr': {'class': 'form-input'}}) }}
@@ -187,11 +177,7 @@
                 }
             }
 
-            // Randomly check some features
-            const features = document.querySelectorAll('input[name="property[features][]"]');
-            features.forEach(f => {
-                f.checked = Math.random() > 0.5;
-            });
+
 
             // Visual feedback
             const originalText = btn.innerHTML;

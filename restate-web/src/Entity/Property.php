@@ -16,9 +16,6 @@ class Property
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $listingType = 'rent'; 
-
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -59,7 +56,7 @@ class Property
     private ?string $image = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $listingType = 'sale'; 
+    private ?string $listingType = 'rent'; 
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $status = 'available';
@@ -70,11 +67,7 @@ class Property
     #[ORM\ManyToOne(inversedBy: 'properties')]
     private ?Category $category = null;
 
-    /**
-     * @var Collection<int, Feature>
-     */
-    #[ORM\ManyToMany(targetEntity: Feature::class, inversedBy: 'properties')]
-    private Collection $features;
+
 
     /**
      * @var Collection<int, Review>
@@ -99,7 +92,7 @@ class Property
         $this->reviews = new ArrayCollection();
         $this->galleries = new ArrayCollection();
         $this->bookings = new ArrayCollection();
-        $this->features = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -400,27 +393,5 @@ class Property
 
         return $this;
     }
-    /**
-     * @return Collection<int, Feature>
-     */
-    public function getFeatures(): Collection
-    {
-        return $this->features;
-    }
 
-    public function addFeature(Feature $feature): static
-    {
-        if (!$this->features->contains($feature)) {
-            $this->features->add($feature);
-        }
-
-        return $this;
-    }
-
-    public function removeFeature(Feature $feature): static
-    {
-        $this->features->removeElement($feature);
-
-        return $this;
-    }
 }

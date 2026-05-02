@@ -4,14 +4,13 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Category;
-use App\Entity\Feature;
 use App\Entity\Property;
+use App\Entity\Agent;
 use App\Entity\Booking;
 use App\Entity\Review;
 use App\Form\PropertyType;
 use App\Repository\UserRepository;
 use App\Repository\CategoryRepository;
-use App\Repository\FeatureRepository;
 use App\Repository\PropertyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -68,7 +67,17 @@ class AdminController extends AbstractController
         if ($request->isMethod('POST')) {
             $user->setName($request->request->get('name'));
             $user->setEmail($request->request->get('email'));
-            $user->setUserType($request->request->get('user_type'));
+            $userType = $request->request->get('user_type');
+            $user->setUserType($userType);
+            
+            if ($userType === 'seller' && !$user->getAgent()) {
+                $agent = new Agent();
+                $agent->setName($user->getName());
+                $agent->setEmail($user->getEmail());
+                $agent->setAvatar('images/avatar.png');
+                $agent->setUser($user);
+                $em->persist($agent);
+            }
             
             $newPassword = $request->request->get('password');
             if ($newPassword) {
@@ -172,6 +181,19 @@ class AdminController extends AbstractController
     #[Route('/property/{id}/delete', name: 'app_admin_property_delete', methods: ['POST'])]
     public function deleteProperty(Property $property, EntityManagerInterface $em): Response
     {
+        $hasConfirmedBookings = false;
+        foreach ($property->getBookings() as $booking) {
+            if ($booking->getStatus() === 'confirmed') {
+                $hasConfirmedBookings = true;
+                break;
+            }
+        }
+        
+        if ($hasConfirmedBookings) {
+            $this->addFlash('error', 'Cannot delete property with active confirmed bookings.');
+            return $this->redirectToRoute('app_admin_properties');
+        }
+
         $em->remove($property);
         $em->flush();
         $this->addFlash('success', 'Property removed by Administrator.');
@@ -210,33 +232,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_admin_categories');
     }
 
-    #[Route('/features', name: 'app_admin_features', methods: ['GET', 'POST'])]
-    public function features(Request $request, FeatureRepository $featureRepository, EntityManagerInterface $em): Response
-    {
-        if ($request->isMethod('POST')) {
-            $name = $request->request->get('name');
-            if ($name) {
-                $feature = new Feature();
-                $feature->setName($name);
-                $em->persist($feature);
-                $em->flush();
-                $this->addFlash('success', 'Feature created successfully.');
-            }
-        }
 
-        return $this->render('admin/features.html.twig', [
-            'features' => $featureRepository->findAll(),
-        ]);
-    }
-
-    #[Route('/feature/{id}/delete', name: 'app_admin_feature_delete', methods: ['POST'])]
-    public function deleteFeature(Feature $feature, EntityManagerInterface $em): Response
-    {
-        $em->remove($feature);
-        $em->flush();
-        $this->addFlash('success', 'Attribute purged.');
-        return $this->redirectToRoute('app_admin_features');
-    }
 
     #[Route('/bookings', name: 'app_admin_bookings')]
     public function bookings(EntityManagerInterface $em): Response
