@@ -133,7 +133,7 @@ class AppSeedCommand extends Command
             $property->setArea(rand(1200, 5000));
             $property->setBedrooms(rand(2, 6));
             $property->setBathrooms(rand(1, 4));
-            $property->setListingType($i % 2 == 0 ? 'sale' : 'rent');
+            $property->setListingType('rent');
             $property->setStatus('available');
             $property->setRating(4.5 + (rand(0, 5) / 10));
             $property->setImage('images/japan.png'); // Placeholder path that exists in project

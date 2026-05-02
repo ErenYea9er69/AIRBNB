@@ -94,8 +94,8 @@
         <div class="profile-info">
             <h1 class="profile-name">{{ app.user.name|default('User') }}</h1>
             <p class="profile-email">{{ app.user.email }}</p>
-            <span class="profile-type-badge type-{{ app.user.userType|default('buyer') }}">
-                {{ app.user.userType|default('buyer')|capitalize }}
+            <span class="profile-type-badge {{ app.user.userType == 'admin' ? 'type-admin' : (app.user.userType == 'seller' ? 'type-seller' : 'type-buyer') }}">
+                {{ app.user.userType == 'seller' ? 'Agent' : app.user.userType|default('buyer')|capitalize }}
             </span>
             <div class="profile-stats">
                 <div class="stat-item">
