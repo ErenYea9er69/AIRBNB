@@ -264,12 +264,12 @@ class AdminController extends AbstractController
     public function reviews(EntityManagerInterface $em): Response
     {
         return $this->render('admin/reviews.html.twig', [
-            'reviews' => $em->getRepository(\App\Entity\Review::class)->findAll(),
+            'reviews' => $em->getRepository(Review::class)->findAll(),
         ]);
     }
 
     #[Route('/review/{id}/delete', name: 'app_admin_review_delete', methods: ['POST'])]
-    public function deleteReview(\App\Entity\Review $review, EntityManagerInterface $em): Response
+    public function deleteReview(Review $review, EntityManagerInterface $em): Response
     {
         $em->remove($review);
         $em->flush();

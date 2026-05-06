@@ -14,7 +14,7 @@
                     <th>Ref ID</th>
                     <th>Property</th>
                     <th>User</th>
-                    <th>Visit Date</th>
+                    <th>Arrival / Depart</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -28,7 +28,8 @@
                         <div style="font-size: 11px; color: var(--text-dim);">{{ booking.user.email }}</div>
                     </td>
                     <td style="color: var(--text-dim);">
-                        {{ booking.visitDate|date('M d, Y @ H:i') }}
+                        {{ booking.visitDate|date('M d, Y') }} - 
+                        {{ booking.endDate ? booking.endDate|date('M d, Y') : 'N/A' }}
                     </td>
                     <td>
                         {% set color = '#F59E0B' %} {# pending #}

@@ -54,9 +54,18 @@
     .agent-action-btn:hover { background:rgba(0,97,255,0.15); transform:scale(1.08); }
     .agent-action-btn img { width:20px; height:20px; }
 
-    .gallery-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .gallery-grid img { width:100%; height:160px; border-radius:16px; object-fit:cover; cursor:pointer; transition:all 0.35s; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-    .gallery-grid img:hover { transform:scale(1.03); box-shadow:0 6px 20px rgba(0,0,0,0.12); }
+    .gallery-carousel-wrap { position: relative; }
+    .gallery-grid { display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
+    .gallery-grid::-webkit-scrollbar { display: none; }
+    .gallery-grid img { flex:0 0 100%; scroll-snap-align:center; height:450px; border-radius:24px; object-fit:cover; transition:all 0.5s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 12px 40px rgba(0,0,0,0.1); filter: brightness(0.95); transform: scale(0.98); }
+    .gallery-grid img:hover { transform: scale(1); filter: brightness(1); box-shadow:0 16px 50px rgba(0,0,0,0.15); }
+    
+    .gallery-nav-btn { position:absolute; top:50%; transform:translateY(-50%); width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.5); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 8px 32px rgba(0,0,0,0.1); z-index:10; }
+    .gallery-nav-btn:hover { background:#0061FF; border-color:#0061FF; transform:translateY(-50%) scale(1.1); box-shadow:0 12px 40px rgba(0,97,255,0.4); }
+    .gallery-nav-btn:hover img { filter: brightness(10); }
+    .gallery-nav-btn.prev { left: -20px; }
+    .gallery-nav-btn.next { right: -20px; }
+    .gallery-nav-btn img { width:24px; height:24px; transition:all 0.4s ease; opacity: 0.8; }
 
     .review-card { padding:20px 24px; background:#f8f9fc; border-radius:16px; }
     .review-header { display:flex; align-items:center; justify-content:space-between; }
@@ -201,10 +210,18 @@
         {% if property.galleries|length > 0 %}
         <div class="section-divider">
             <h2 class="section-title">Gallery</h2>
-            <div class="gallery-grid">
-                {% for image in property.galleries %}
-                    <img src="{{ asset(image.image) }}" alt="Gallery image">
-                {% endfor %}
+            <div class="gallery-carousel-wrap">
+                <button class="gallery-nav-btn prev" onclick="scrollGallery(-1)">
+                    <img src="{{ asset('icons/right-arrow.png') }}" style="transform: scaleX(-1);">
+                </button>
+                <div class="gallery-grid" id="galleryGrid">
+                    {% for image in property.galleries %}
+                        <img src="{{ asset(image.image) }}" alt="Gallery image">
+                    {% endfor %}
+                </div>
+                <button class="gallery-nav-btn next" onclick="scrollGallery(1)">
+                    <img src="{{ asset('icons/right-arrow.png') }}">
+                </button>
             </div>
         </div>
         {% endif %}
@@ -315,10 +332,16 @@
                 {% endfor %}
             {% endfor %}
 
+            {% if property.status == 'available' %}
             <form action="{{ path('app_property_book', {id: property.id}) }}" method="POST">
                 <div style="margin-bottom:16px;">
-                    <label style="display:block; font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#8C8E98; margin-bottom:6px; text-transform:uppercase;">Preferred Visit Date</label>
-                    <input type="date" name="visit_date" required 
+                    <label style="display:block; font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#8C8E98; margin-bottom:6px; text-transform:uppercase;">Arrivée date</label>
+                    <input type="date" name="start_date" id="start_date" min="{{ 'now'|date('Y-m-d') }}" required 
+                           style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(0,97,255,0.1); font-family:'Rubik',sans-serif; outline:none; box-sizing:border-box;">
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#8C8E98; margin-bottom:6px; text-transform:uppercase;">Depart</label>
+                    <input type="date" name="end_date" id="end_date" min="{{ 'now'|date('Y-m-d') }}" required 
                            style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(0,97,255,0.1); font-family:'Rubik',sans-serif; outline:none; box-sizing:border-box;">
                 </div>
                 <div style="margin-bottom:20px;">
@@ -328,53 +351,24 @@
                 </div>
 
                 <button type="submit" class="sidebar-btn">
-                    Schedule Visit
+                    Reserve
                 </button>
             </form>
+            {% else %}
+            <div style="padding:20px; background:#f8f9fc; border-radius:16px; text-align:center; border:1px solid rgba(0,97,255,0.06); margin-top:24px;">
+                <p style="font-family:'Rubik-Bold',sans-serif; font-size:16px; color:#191D31; margin:0 0 4px;">Not Available</p>
+                <p style="font-family:'Rubik',sans-serif; font-size:13px; color:#8C8E98; margin:0;">This property has already been reserved.</p>
+            </div>
+            {% endif %}
 
-            <button onclick="toggleFavorite({{ property.id }}, this)" class="sidebar-fav-btn" id="fav-btn" style="margin-top:12px;">
-                <img src="{{ asset('icons/heart.png') }}" id="heart-icon"
-                     style="{% if app.user and property in app.user.savedProperties %}filter:none;{% else %}filter:grayscale(1) opacity(0.5);{% endif %}">
-                <span>{{ app.user and property in app.user.savedProperties ? 'Saved' : 'Save Property' }}</span>
-            </button>
         </div>
     </div>
 </div>
 
 <script>
-function toggleFavorite(propertyId, buttonElement) {
-    fetch(`/user/favorite/${propertyId}`, {
-        method: 'POST',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(response => {
-        if (response.status === 401) {
-            window.location.href = "{{ path('app_login') }}";
-            return;
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data && data.success) {
-            const icon = document.getElementById('heart-icon');
-            const btn = document.getElementById('fav-btn');
-            if (data.isFavorite) {
-                icon.style.filter = 'none';
-                btn.querySelector('span').textContent = 'Saved';
-            } else {
-                icon.style.filter = 'grayscale(1) opacity(0.5)';
-                btn.querySelector('span').textContent = 'Save Property';
-            }
-        }
-    })
-    .catch(error => console.error('Error toggling favorite:', error));
-}
-</script>
-
-<script>
     document.addEventListener('DOMContentLoaded', function() {
-        var lat = {{ property.latitude|default(34.0522) }};
-        var lng = {{ property.longitude|default(-118.2437) }};
+        var lat = parseFloat("{{ property.latitude|default('34.0522') }}") || 34.0522;
+        var lng = parseFloat("{{ property.longitude|default('-118.2437') }}") || -118.2437;
         
         var map = L.map('map', {
             center: [lat, lng],
@@ -394,24 +388,27 @@ function toggleFavorite(propertyId, buttonElement) {
     });
 </script>
 
-{% if similarProperties|length > 0 %}
-<div style="max-width:1200px; margin:48px auto; padding:0 48px;">
-    <h2 class="section-title" style="font-size:24px; margin-bottom:24px;">Similar Properties</h2>
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px;">
-        {% for item in similarProperties %}
-            <a href="{{ path('app_property_show', {id: item.id}) }}" class="listing-card" style="text-decoration:none;">
-                <div class="listing-img" style="height:180px;">
-                    <img src="{{ asset(item.image) }}" alt="{{ item.title }}">
-                    <div class="listing-type" style="top:10px; left:10px;">For {{ item.listingType|capitalize }}</div>
-                </div>
-                <div class="listing-info">
-                    <h3 class="listing-title" style="font-size:16px;">{{ item.title }}</h3>
-                    <p style="font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin:4px 0 0;">{{ item.address }}</p>
-                    <p class="listing-price" style="font-size:18px;">${{ item.price|number_format }}</p>
-                </div>
-            </a>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
+<script>
+function scrollGallery(direction) {
+    const grid = document.getElementById('galleryGrid');
+    const scrollAmount = grid.clientWidth + 20; // width + gap
+    grid.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startInput = document.getElementById('start_date');
+        const endInput = document.getElementById('end_date');
+        if(startInput && endInput) {
+            startInput.addEventListener('change', function() {
+                endInput.min = this.value;
+                if(endInput.value && endInput.value < this.value) {
+                    endInput.value = this.value;
+                }
+            });
+        }
+    });
+</script>
+
 {% endblock %}

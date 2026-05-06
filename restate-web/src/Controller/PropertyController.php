@@ -23,17 +23,8 @@ class PropertyController extends AbstractController
             throw $this->createNotFoundException('Property not found');
         }
 
-        $similarProperties = $propertyRepository->findBy(
-            ['category' => $property->getCategory()],
-            ['id' => 'DESC'],
-            4
-        );
-        // Filter out current property
-        $similarProperties = array_filter($similarProperties, fn($p) => $p->getId() !== $property->getId());
-
         return $this->render('property/show.html.twig', [
             'property' => $property,
-            'similarProperties' => $similarProperties,
         ]);
     }
 
@@ -46,25 +37,43 @@ class PropertyController extends AbstractController
             throw $this->createNotFoundException('Property not found');
         }
 
-        $visitDate = $request->request->get('visit_date');
+        $startDate = $request->request->get('start_date');
+        $endDate = $request->request->get('end_date');
         $message = $request->request->get('message');
 
-        if (!$visitDate) {
-            $this->addFlash('error', 'Please select a visit date.');
+        if (!$startDate || !$endDate) {
+            $this->addFlash('error', 'Please select both arrival and departure dates.');
+            return $this->redirectToRoute('app_property_show', ['id' => $id]);
+        }
+
+        $start = new \DateTime($startDate);
+        $end = new \DateTime($endDate);
+        $now = new \DateTime('today');
+
+        if ($start < $now) {
+            $this->addFlash('error', 'The arrival date cannot be in the past.');
+            return $this->redirectToRoute('app_property_show', ['id' => $id]);
+        }
+
+        if ($end < $start) {
+            $this->addFlash('error', 'The departure date cannot be before the arrival date.');
             return $this->redirectToRoute('app_property_show', ['id' => $id]);
         }
 
         $booking = new Booking();
         $booking->setProperty($property);
         $booking->setUser($this->getUser());
-        $booking->setVisitDate(new \DateTime($visitDate));
+        $booking->setVisitDate($start);
+        $booking->setEndDate($end);
         $booking->setMessage($message);
         $booking->setStatus('pending');
+
+        $property->setStatus('not available');
 
         $entityManager->persist($booking);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Your visit request has been sent to the agent!');
+        $this->addFlash('success', 'Your reservation request has been sent to the agent!');
 
         return $this->redirectToRoute('app_property_show', ['id' => $id]);
     }

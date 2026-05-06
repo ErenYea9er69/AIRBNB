@@ -25,6 +25,9 @@ class Booking
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $visitDate = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $endDate = null;
+
     #[ORM\Column(length: 20)]
     private ?string $status = 'pending'; // pending, confirmed, cancelled, completed
 
@@ -74,6 +77,17 @@ class Booking
     public function setVisitDate(\DateTimeInterface $visitDate): static
     {
         $this->visitDate = $visitDate;
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTimeInterface $endDate): static
+    {
+        $this->endDate = $endDate;
         return $this;
     }
 

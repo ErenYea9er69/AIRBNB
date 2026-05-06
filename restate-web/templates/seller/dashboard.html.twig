@@ -151,7 +151,7 @@
                     <div class="booking-card">
                         <div class="booking-header">
                             <span class="booking-user">{{ booking.user ? booking.user.name : 'Unknown User' }}</span>
-                            <span class="booking-date">{{ booking.visitDate ? booking.visitDate|date('M d, H:i') : 'No Date' }}</span>
+                            <span class="booking-date">{{ booking.visitDate ? booking.visitDate|date('M d') : 'No Date' }} - {{ booking.endDate ? booking.endDate|date('M d') : 'N/A' }}</span>
                         </div>
                         <p class="booking-prop">Property: <strong>{{ booking.property ? booking.property.title : 'Deleted Property' }}</strong></p>
                         
