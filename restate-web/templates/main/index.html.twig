@@ -29,41 +29,7 @@
 			</form>
 		</div>
 
-		{# Featured #}
-		<div class="mt-10">
-			<div class="flex items-center justify-between mb-4">
-				<h2 class="text-xl font-rubik-bold text-black-300">Featured</h2>
-				<a href="{{ path('app_explore') }}" class="text-base font-rubik-bold text-primary-300">See All</a>
-			</div>
 
-			<div class="flex flex-row gap-5 overflow-x-auto pb-4">
-				{% for item in latestProperties %}
-					<a href="{{ path('app_property_show', {id: item.id}) }}" class="min-w-[280px] h-[380px] relative rounded-3xl overflow-hidden cursor-pointer group">
-						<img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-						<img src="{{ asset('images/card-gradient.png') }}" class="absolute inset-0 w-full h-full">
-
-						<div class="absolute top-5 right-5 flex flex-row items-center bg-white/90 px-3 py-1.5 rounded-full shadow-sm">
-							<img src="{{ asset('icons/star.png') }}" class="w-3.5 h-3.5">
-							<span class="text-xs font-rubik-bold text-primary-300 ml-1">{{ item.rating }}</span>
-						</div>
-
-						<div class="absolute bottom-5 inset-x-5 flex flex-col items-start translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-							<h3 class="text-xl font-rubik-extrabold text-white line-clamp-1">{{ item.title }}</h3>
-							<p class="text-sm font-rubik text-white/90 mt-1 line-clamp-1">{{ item.address }}</p>
-
-							<div class="flex flex-row items-center justify-between w-full mt-3">
-								<p class="text-xl font-rubik-extrabold text-white">${{ item.price|number_format }}</p>
-								<div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-									<img src="{{ asset('icons/heart.png') }}" class="w-5 h-5 brightness-200">
-								</div>
-							</div>
-						</div>
-					</a>
-				{% else %}
-					<p class="text-black-100 italic">No featured properties yet.</p>
-				{% endfor %}
-			</div>
-		</div>
 
 		{# Filter Categories #}
 		<div class="mt-8">

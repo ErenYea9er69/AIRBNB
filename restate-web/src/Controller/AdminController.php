@@ -44,12 +44,10 @@ class AdminController extends AbstractController
         ];
 
         $recentUsers = $userRepository->findBy([], ['id' => 'DESC'], 5);
-        $recentProperties = $propertyRepository->findBy([], ['id' => 'DESC'], 5);
 
         return $this->render('admin/dashboard.html.twig', [
             'stats' => $stats,
             'recentUsers' => $recentUsers,
-            'recentProperties' => $recentProperties,
         ]);
     }
 

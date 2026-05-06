@@ -18,8 +18,6 @@ class MainController extends AbstractController
     {
         $categoryId = $request->query->get('category');
         $activeCategory = $categoryId ? $categoryRepository->find($categoryId) : null;
-
-        $latestProperties = $propertyRepository->findBy([], ['id' => 'DESC'], 5);
         
         $criteria = $activeCategory ? ['category' => $activeCategory] : [];
         $recommendations = $propertyRepository->findBy($criteria, ['rating' => 'DESC'], 10);
@@ -28,7 +26,6 @@ class MainController extends AbstractController
         $agents = $entityManager->getRepository(\App\Entity\Agent::class)->findBy([], ['id' => 'DESC'], 5);
 
         return $this->render('main/index.html.twig', [
-            'latestProperties' => $latestProperties,
             'recommendations' => $recommendations,
             'categories' => $categories,
             'activeCategoryId' => $categoryId,

@@ -31,33 +31,6 @@
         <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">Scheduled visits</div>
     </div>
 
-    <!-- Recent Activity -->
-    <div class="card" style="grid-column: span 8; margin-top: 10px;">
-        <h3 style="margin-bottom: 20px; font-size: 18px;">Recent Properties</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Location</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for property in recentProperties %}
-                <tr>
-                    <td style="font-weight: 500;">{{ property.title }}</td>
-                    <td style="color: var(--text-dim);">{{ property.city }}, {{ property.state }}</td>
-                    <td style="color: var(--primary); font-weight: 600;">${{ property.price|number_format }}</td>
-                    <td>
-                        <span style="font-size: 11px; padding: 4px 10px; background: var(--primary-bg); color: var(--primary); border-radius: 50px; font-weight: 600;">{{ property.status|upper }}</span>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
     <div class="card" style="grid-column: span 4; margin-top: 10px;">
         <h3 style="margin-bottom: 20px; font-size: 18px;">Recent Users</h3>
         <div style="display: flex; flex-direction: column; gap: 20px;">
