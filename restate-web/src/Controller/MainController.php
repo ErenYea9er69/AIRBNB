@@ -37,18 +37,12 @@ class MainController extends AbstractController
     public function explore(PropertyRepository $propertyRepository, Request $request): Response
     {
         $query = $request->query->get('query');
-        $filter = $request->query->get('filter', 'All');
 
         $qb = $propertyRepository->createQueryBuilder('p');
 
         if ($query) {
             $qb->andWhere('p.title LIKE :query OR p.address LIKE :query OR p.city LIKE :query OR p.state LIKE :query')
                ->setParameter('query', '%' . $query . '%');
-        }
-
-        if ($filter && $filter !== 'All') {
-            $qb->andWhere('p.listingType = :filter')
-               ->setParameter('filter', $filter);
         }
 
         $properties = $qb->getQuery()->getResult();

@@ -233,6 +233,12 @@ class SellerController extends AbstractController
 
         if (in_array($status, ['confirmed', 'cancelled', 'completed'])) {
             $booking->setStatus($status);
+            
+            // Restore property availability when booking is cancelled
+            if ($status === 'cancelled') {
+                $booking->getProperty()->setStatus('available');
+            }
+            
             $entityManager->flush();
             $this->addFlash('success', 'Booking status updated to ' . $status);
         }

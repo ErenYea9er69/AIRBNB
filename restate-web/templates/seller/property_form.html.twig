@@ -22,9 +22,23 @@
 
     .help-text { font-family:'Rubik',sans-serif; font-size:12px; color:#8C8E98; margin-top:6px; }
 
+    .amenities-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+    .amenity-item { position:relative; }
+    .amenity-item input[type="checkbox"] { position:absolute; opacity:0; width:0; height:0; }
+    .amenity-label { display:flex; flex-direction:column; align-items:center; gap:8px; padding:16px 10px; background:#f8f9fc; border:2px solid transparent; border-radius:16px; cursor:pointer; transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align:center; }
+    .amenity-label:hover { background:rgba(0,97,255,0.04); border-color:rgba(0,97,255,0.15); transform:translateY(-2px); }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label { background:rgba(0,97,255,0.08); border-color:#0061FF; box-shadow:0 4px 16px rgba(0,97,255,0.12); }
+    .amenity-icon { width:48px; height:48px; border-radius:50%; background:rgba(0,97,255,0.08); display:flex; align-items:center; justify-content:center; transition:all 0.3s; }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-icon { background:#0061FF; }
+    .amenity-icon img { width:24px; height:24px; transition:filter 0.3s; }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-icon img { filter:brightness(10); }
+    .amenity-name { font-family:'Rubik-Medium',sans-serif; font-size:12px; color:#666876; }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-name { color:#0061FF; font-weight:600; }
+
     @media (max-width:768px) {
         .form-grid { grid-template-columns:1fr; }
         .form-full { grid-column:span 1; }
+        .amenities-grid { grid-template-columns:repeat(3, 1fr); }
     }
 </style>
 
@@ -93,12 +107,12 @@
                     {{ form_widget(form.bathrooms, {'attr': {'class': 'form-input'}}) }}
                 </div>
                 <div class="form-field">
-                    <label class="form-label">Area (sqft)</label>
-                    {{ form_widget(form.area, {'attr': {'class': 'form-input', 'placeholder': 'e.g. 2400'}}) }}
+                    <label class="form-label">Kitchens</label>
+                    {{ form_widget(form.kitchens, {'attr': {'class': 'form-input'}}) }}
                 </div>
                 <div class="form-field">
-                    <label class="form-label">Listing Type</label>
-                    {{ form_widget(form.listingType, {'attr': {'class': 'form-input'}}) }}
+                    <label class="form-label">Area (sqft)</label>
+                    {{ form_widget(form.area, {'attr': {'class': 'form-input', 'placeholder': 'e.g. 2400'}}) }}
                 </div>
                 <div class="form-field">
                     <label class="form-label">Latitude</label>
@@ -124,9 +138,33 @@
                     <p class="help-text">Select multiple images to show more details of your property.</p>
                 </div>
 
-                <div class="form-field">
-                    <label class="form-label">Availability Status</label>
-                    {{ form_widget(form.status, {'attr': {'class': 'form-input'}}) }}
+                <div class="form-field form-full">
+                    <label class="form-label">Amenities</label>
+                    <div class="amenities-grid">
+                        {% set amenity_icons = {
+                            'wifi': 'icons/wifi.png',
+                            'parking': 'icons/car-park.png',
+                            'pool': 'icons/swim.png',
+                            'ac': 'icons/snowflake.svg',
+                            'heating': 'icons/flame.svg',
+                            'washer': 'icons/laundry.png',
+                            'dryer': 'icons/dryer.svg',
+                            'balcony': 'icons/balcony.svg',
+                            'garden': 'icons/garden.svg',
+                            'gym': 'icons/dumbell.png',
+                            'security': 'icons/shield.png',
+                            'pet_friendly': 'icons/dog.png'
+                        } %}
+                        {% for child in form.amenities %}
+                            <div class="amenity-item">
+                                {{ form_widget(child) }}
+                                <label class="amenity-label" for="{{ child.vars.id }}">
+                                    <div class="amenity-icon"><img src="{{ asset(amenity_icons[child.vars.value] | default('icons/star.png')) }}"></div>
+                                    <span class="amenity-name">{{ child.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 
@@ -141,26 +179,59 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
+        // Auto-geocoding functionality
+        const addressInput = document.getElementById('property_address');
+        const latInput = document.getElementById('property_latitude');
+        const lngInput = document.getElementById('property_longitude');
+        let geocodeTimeout;
+
+        if (addressInput && latInput && lngInput) {
+            addressInput.addEventListener('input', function() {
+                clearTimeout(geocodeTimeout);
+                const query = this.value;
+                if (query.length < 5) return;
+
+                geocodeTimeout = setTimeout(() => {
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                latInput.value = parseFloat(data[0].lat).toFixed(6);
+                                lngInput.value = parseFloat(data[0].lon).toFixed(6);
+                                addressInput.style.borderColor = '#00C853'; // Success green
+                            }
+                        })
+                        .catch(err => console.error('Geocoding error:', err));
+                }, 1000);
+            });
+        }
+    
     const initMagicFill = () => {
         const btn = document.getElementById('magic-fill');
         if (!btn) return;
 
         btn.addEventListener('click', () => {
             const data = {
-                'property_title': 'Luxury Penthouse with Skyline View',
-                'property_address': '789 Diamond District, Manhattan',
-                'property_city': 'New York',
-                'property_state': 'NY',
-                'property_price': '1250000',
+                'property_title': 'Luxury Hammamet Villa',
+                'property_address': 'av.monji slime, hammamet, nabeul',
+                'property_city': 'Hammamet',
+                'property_state': 'Nabeul',
+                'property_price': '850000',
                 'property_area': '3200',
                 'property_bedrooms': '4',
                 'property_bathrooms': '3',
-                'property_description': 'Experience the pinnacle of urban living in this breathtaking penthouse. Featuring floor-to-ceiling windows, a private terrace, and state-of-the-art appliances, this residence offers unparalleled luxury in the heart of the city.',
-                'property_latitude': '40.7128',
-                'property_longitude': '-74.0060',
-                'property_listingType': 'sale',
-                'property_status': 'available'
+                'property_kitchens': '1',
+                'property_description': 'Breathtaking villa located in the heart of Hammamet. This modern property features a spacious garden, high-end finishes, and is just minutes away from the beach. Perfect for a luxurious lifestyle.',
+                'property_latitude': '36.4000',
+                'property_longitude': '10.6167'
             };
+
+            // Auto-select some amenities
+            const amenityIds = ['property_amenities_0', 'property_amenities_1', 'property_amenities_3', 'property_amenities_5', 'property_amenities_7', 'property_amenities_10'];
+            amenityIds.forEach(id => {
+                const cb = document.getElementById(id);
+                if (cb) cb.checked = true;
+            });
 
             for (const [id, value] of Object.entries(data)) {
                 const el = document.getElementById(id);

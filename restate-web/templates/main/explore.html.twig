@@ -38,7 +38,7 @@
                     <div class="w-full h-40 relative rounded-xl overflow-hidden">
                          <img src="{{ asset(item.image) }}" alt="property" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                          <div class="absolute top-3 left-3 bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
-                             <span class="text-[10px] font-rubik-bold text-primary-300 uppercase">{{ item.listingType|default('Rent') }}</span>
+                             <span class="text-[10px] font-rubik-bold text-primary-300 uppercase">{{ 'For Rent' }}</span>
                          </div>
                          <div class="absolute top-3 right-3 flex flex-row items-center bg-white/90 px-2.5 py-1 rounded-full shadow-sm">
                             <img src="{{ asset('icons/star.png') }}" class="w-3 h-3">

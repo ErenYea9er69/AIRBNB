@@ -67,6 +67,14 @@
     .gallery-nav-btn.next { right: -20px; }
     .gallery-nav-btn img { width:24px; height:24px; transition:all 0.4s ease; opacity: 0.8; }
 
+    .amenities-show { display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; }
+    .amenity-chip { display:flex; flex-direction:column; align-items:center; gap:8px; padding:20px 12px; background:#f8f9fc; border-radius:16px; transition:all 0.3s; }
+    .amenity-chip:hover { background:rgba(0,97,255,0.06); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+    .amenity-chip-icon { width:48px; height:48px; border-radius:50%; background:rgba(0,97,255,0.08); display:flex; align-items:center; justify-content:center; }
+    .amenity-chip-icon img { width:24px; height:24px; }
+    .amenity-chip-label { font-family:'Rubik-Medium',sans-serif; font-size:13px; color:#191D31; font-weight:500; }
+    @media (max-width:600px) { .amenities-show { grid-template-columns:repeat(3, 1fr); } }
+
     .review-card { padding:20px 24px; background:#f8f9fc; border-radius:16px; }
     .review-header { display:flex; align-items:center; justify-content:space-between; }
     .review-user { display:flex; align-items:center; gap:12px; }
@@ -176,7 +184,10 @@
                 <div class="facility-icon"><img src="{{ asset('icons/area.png') }}"></div>
                 <span class="facility-label">{{ property.area }} sqft</span>
             </div>
-
+            <div class="facility-card">
+                <div class="facility-icon"><img src="{{ asset('icons/cutlery.png') }}"></div>
+                <span class="facility-label">{{ property.kitchens }} Kitchen</span>
+            </div>
         </div>
 
         <div class="section-divider">
@@ -222,6 +233,35 @@
                 <button class="gallery-nav-btn next" onclick="scrollGallery(1)">
                     <img src="{{ asset('icons/right-arrow.png') }}">
                 </button>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if property.amenities is not empty %}
+        <div class="section-divider">
+            <h2 class="section-title">Amenities</h2>
+            {% set amenity_map = {
+                'wifi': {'icon': 'icons/wifi.png', 'label': 'WiFi'},
+                'parking': {'icon': 'icons/car-park.png', 'label': 'Parking'},
+                'pool': {'icon': 'icons/swim.png', 'label': 'Pool'},
+                'ac': {'icon': 'icons/snowflake.svg', 'label': 'Air Conditioning'},
+                'heating': {'icon': 'icons/flame.svg', 'label': 'Heating'},
+                'washer': {'icon': 'icons/laundry.png', 'label': 'Washer'},
+                'dryer': {'icon': 'icons/dryer.svg', 'label': 'Dryer'},
+                'balcony': {'icon': 'icons/balcony.svg', 'label': 'Balcony'},
+                'garden': {'icon': 'icons/garden.svg', 'label': 'Garden'},
+                'gym': {'icon': 'icons/dumbell.png', 'label': 'Gym'},
+                'security': {'icon': 'icons/shield.png', 'label': 'Security'},
+                'pet_friendly': {'icon': 'icons/dog.png', 'label': 'Pet Friendly'}
+            } %}
+            <div class="amenities-show">
+                {% for amenity in property.amenities %}
+                    {% set info = amenity_map[amenity] | default({'icon': 'icons/star.png', 'label': amenity}) %}
+                    <div class="amenity-chip">
+                        <div class="amenity-chip-icon"><img src="{{ asset(info.icon) }}"></div>
+                        <span class="amenity-chip-label">{{ info.label }}</span>
+                    </div>
+                {% endfor %}
             </div>
         </div>
         {% endif %}
@@ -296,10 +336,7 @@
 
             <div class="sidebar-divider"></div>
 
-            <div class="sidebar-detail">
-                <span class="sidebar-detail-label">Listing Type</span>
-                <span class="sidebar-detail-value">{{ property.listingType|default('rent')|capitalize }}</span>
-            </div>
+
             <div class="sidebar-detail">
                 <span class="sidebar-detail-label">Status</span>
                 <span class="sidebar-detail-value" style="color:{{ property.status == 'available' ? '#22c55e' : '#8C8E98' }};">{{ property.status|default('available')|capitalize }}</span>

@@ -244,6 +244,12 @@ class AdminController extends AbstractController
     public function updateBookingStatus(Booking $booking, string $status, EntityManagerInterface $em): Response
     {
         $booking->setStatus($status);
+        
+        // Restore property availability when booking is cancelled
+        if ($status === 'cancelled') {
+            $booking->getProperty()->setStatus('available');
+        }
+        
         $em->flush();
         $this->addFlash('success', 'Interaction state updated.');
         return $this->redirectToRoute('app_admin_bookings');

@@ -16,15 +16,18 @@
     .form-control:focus { border-color: var(--primary); }
     textarea.form-control { height: 120px; resize: vertical; }
     
-    .checkbox-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 10px;
-        background: var(--bg);
-        padding: 15px;
-        border-radius: 12px;
-    }
-    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .amenities-admin { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:8px; }
+    .amenity-item { position:relative; }
+    .amenity-item input[type="checkbox"] { position:absolute; opacity:0; width:0; height:0; }
+    .amenity-label { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; background:var(--bg); border:2px solid transparent; border-radius:14px; cursor:pointer; transition:all 0.3s; text-align:center; }
+    .amenity-label:hover { border-color:rgba(0,122,255,0.2); }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label { background:rgba(0,122,255,0.1); border-color:var(--primary); }
+    .amenity-icon { width:44px; height:44px; border-radius:50%; background:rgba(0,122,255,0.1); display:flex; align-items:center; justify-content:center; transition:all 0.3s; }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-icon { background:var(--primary); }
+    .amenity-icon img { width:22px; height:22px; transition:filter 0.3s; }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-icon img { filter:brightness(10); }
+    .amenity-name { font-size:11px; color:var(--text-dim); }
+    .amenity-item input[type="checkbox"]:checked + .amenity-label .amenity-name { color:var(--primary); font-weight:600; }
 {% endblock %}
 
 {% block body %}
@@ -78,8 +81,8 @@
                     {{ form_widget(form.bathrooms, {'attr': {'class': 'form-control'}}) }}
                 </div>
                 <div class="form-group">
-                    {{ form_label(form.status) }}
-                    {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_label(form.kitchens) }}
+                    {{ form_widget(form.kitchens, {'attr': {'class': 'form-control'}}) }}
                 </div>
             </div>
 
@@ -90,17 +93,32 @@
 
 
 
-            <div class="form-grid">
-                <div class="form-group">
-                    {{ form_label(form.imageFile) }}
-                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
-                    <div style="margin-top: 10px;">
-                        <img src="{{ asset(property.image) }}" style="height: 100px; border-radius: 8px;">
-                    </div>
+            <div class="form-group">
+                {{ form_label(form.imageFile) }}
+                {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                <div style="margin-top: 10px;">
+                    <img src="{{ asset(property.image) }}" style="height: 100px; border-radius: 8px;">
                 </div>
-                <div class="form-group">
-                    {{ form_label(form.listingType) }}
-                    {{ form_widget(form.listingType, {'attr': {'class': 'form-control'}}) }}
+            </div>
+
+            <div class="form-group">
+                <label style="display:block; margin-bottom:8px; font-weight:500; font-size:14px; color:var(--text-dim);">Amenities</label>
+                <div class="amenities-admin">
+                    {% set amenity_icons = {
+                        'wifi': 'icons/wifi.png', 'parking': 'icons/car-park.png', 'pool': 'icons/swim.png', 'ac': 'icons/snowflake.svg',
+                        'heating': 'icons/flame.svg', 'washer': 'icons/laundry.png', 'dryer': 'icons/dryer.svg',
+                        'balcony': 'icons/balcony.svg', 'garden': 'icons/garden.svg', 'gym': 'icons/dumbell.png',
+                        'security': 'icons/shield.png', 'pet_friendly': 'icons/dog.png'
+                    } %}
+                    {% for child in form.amenities %}
+                        <div class="amenity-item">
+                            {{ form_widget(child) }}
+                            <label class="amenity-label" for="{{ child.vars.id }}">
+                                <div class="amenity-icon"><img src="{{ asset(amenity_icons[child.vars.value] | default('icons/star.png')) }}"></div>
+                                <span class="amenity-name">{{ child.vars.label }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -111,4 +129,35 @@
         {{ form_end(form) }}
     </div>
 </div>
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addressInput = document.getElementById('property_address');
+        const latInput = document.getElementById('property_latitude');
+        const lngInput = document.getElementById('property_longitude');
+        let geocodeTimeout;
+
+        if (addressInput && latInput && lngInput) {
+            addressInput.addEventListener('input', function() {
+                clearTimeout(geocodeTimeout);
+                const query = this.value;
+                if (query.length < 5) return;
+
+                geocodeTimeout = setTimeout(() => {
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                latInput.value = parseFloat(data[0].lat).toFixed(6);
+                                lngInput.value = parseFloat(data[0].lon).toFixed(6);
+                                addressInput.style.borderColor = '#007AFF';
+                            }
+                        })
+                        .catch(err => console.error('Geocoding error:', err));
+                }, 1000);
+            });
+        }
+    });
+</script>
 {% endblock %}

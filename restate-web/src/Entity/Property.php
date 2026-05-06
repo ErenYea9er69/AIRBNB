@@ -61,6 +61,9 @@ class Property
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $status = 'available';
 
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $amenities = [];
+
     #[ORM\ManyToOne(inversedBy: 'properties')]
     private ?Agent $agent = null;
 
@@ -86,6 +89,9 @@ class Property
      */
     #[ORM\OneToMany(mappedBy: 'property', targetEntity: Booking::class, orphanRemoval: true)]
     private Collection $bookings;
+
+    #[ORM\Column]
+    private ?int $kitchens = null;
 
     public function __construct()
     {
@@ -390,6 +396,30 @@ class Property
                 $booking->setProperty(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAmenities(): ?array
+    {
+        return $this->amenities;
+    }
+
+    public function setAmenities(?array $amenities): static
+    {
+        $this->amenities = $amenities;
+
+        return $this;
+    }
+
+    public function getKitchens(): ?int
+    {
+        return $this->kitchens;
+    }
+
+    public function setKitchens(int $kitchens): static
+    {
+        $this->kitchens = $kitchens;
 
         return $this;
     }
