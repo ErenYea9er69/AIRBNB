@@ -12,8 +12,7 @@
             <thead>
                 <tr>
                     <th>User Details</th>
-                    <th>Account Type</th>
-                    <th>System Roles</th>
+                    <th>Status & Access</th>
                     <th style="text-align: right;">Action</th>
                 </tr>
             </thead>
@@ -25,12 +24,12 @@
                         <div style="font-size: 12px; color: var(--text-dim);">{{ user.email }}</div>
                     </td>
                     <td>
-                        <span style="text-transform: capitalize;">{{ user.userType }}</span>
-                    </td>
-                    <td>
-                        {% for role in user.roles %}
-                            <span style="font-size: 11px; padding: 4px 10px; background: {{ role == 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--primary-bg)' }}; color: {{ role == 'ROLE_ADMIN' ? 'white' : 'var(--primary)' }}; border-radius: 50px; font-weight: 600; margin-right: 5px;">{{ role }}</span>
-                        {% endfor %}
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="text-transform: capitalize; font-size: 13px; font-weight: 500;">{{ user.userType }}</span>
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                <span style="font-size: 10px; padding: 2px 8px; background: var(--primary); color: white; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">ADMIN</span>
+                            {% endif %}
+                        </div>
                     </td>
                     <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
                         <a href="{{ path('app_admin_user_edit', {id: user.id}) }}" class="btn" style="padding: 8px 16px; font-size: 12px; background: var(--primary-bg); color: var(--primary); text-decoration: none;">Edit</a>

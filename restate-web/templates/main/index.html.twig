@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "macros/avatar.html.twig" as avatars %}
 
 {% block title %}Home - Real Scout
 {% endblock %}
@@ -67,7 +68,7 @@
 
 							<div class="flex flex-row items-center justify-between w-full mt-3">
 								<div class="flex flex-row items-center">
-									<img src="{{ item.agent and item.agent.avatar ? asset(item.agent.avatar) : asset('images/avatar.png') }}" class="w-6 h-6 rounded-full border border-white shadow-sm mr-2">
+                                    <div style="margin-right: 8px;">{{ avatars.display(item.agent, 'avatar-xs') }}</div>
 									<p class="text-base font-rubik-bold text-primary-300">${{ item.price|number_format }}</p>
 								</div>
 								<img src="{{ asset('icons/heart.png') }}" class="w-5 h-5 opacity-40">

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% import "macros/avatar.html.twig" as avatars %}
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Real Scout // Admin Panel{% endblock %}</title>
@@ -180,10 +181,31 @@
 
         .btn:hover { opacity: 0.9; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 97, 255, 0.1); border-radius: 10px; }
+        /* Letter Avatars */
+        .letter-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            font-family: var(--font-main);
+            text-transform: uppercase;
+            background: var(--primary); /* fallback */
+            flex-shrink: 0;
+        }
+        .avatar-s { width: 32px; height: 32px; font-size: 14px; }
+        .avatar-m { width: 48px; height: 48px; font-size: 18px; }
+        .avatar-l { width: 64px; height: 64px; font-size: 24px; }
+        .avatar-xl { width: 120px; height: 120px; font-size: 48px; }
+        
+        .bg-avatar-1 { background: #0061FF; }
+        .bg-avatar-2 { background: #00C853; }
+        .bg-avatar-3 { background: #FF9100; }
+        .bg-avatar-4 { background: #FF3D00; }
+        .bg-avatar-5 { background: #651FFF; }
+        .bg-avatar-6 { background: #D500F9; }
+        .bg-avatar-7 { background: #00B0FF; }
+        .bg-avatar-8 { background: #F50057; }
 
         {% block extra_css %}{% endblock %}
     </style>
@@ -227,7 +249,7 @@
             </div>
             <div class="user-pill">
                 <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">{{ app.user.name }}</span>
-                <img src="{{ asset(app.user.avatar|default('images/avatar.png')) }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                {{ avatars.display(app.user, 'avatar-s') }}
             </div>
         </header>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% import "macros/avatar.html.twig" as avatars %}
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Real Scout{% endblock %}</title>
@@ -157,6 +158,34 @@
                 -ms-overflow-style: none !important;
                 scrollbar-width: none !important;
             }
+
+            /* Letter Avatars */
+            .letter-avatar {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                color: white;
+                font-family: 'Rubik-Bold', sans-serif;
+                text-transform: uppercase;
+                background: var(--primary); /* fallback */
+                flex-shrink: 0;
+            }
+            .avatar-xs { width: 24px; height: 24px; font-size: 10px; }
+            .avatar-s { width: 32px; height: 32px; font-size: 14px; }
+            .avatar-m { width: 48px; height: 48px; font-size: 18px; }
+            .avatar-l { width: 64px; height: 64px; font-size: 24px; }
+            .avatar-xl { width: 120px; height: 120px; font-size: 48px; }
+            .avatar-xxl { width: 160px; height: 160px; font-size: 64px; }
+            
+            .bg-avatar-1 { background: #0061FF; }
+            .bg-avatar-2 { background: #00C853; }
+            .bg-avatar-3 { background: #FF9100; }
+            .bg-avatar-4 { background: #FF3D00; }
+            .bg-avatar-5 { background: #651FFF; }
+            .bg-avatar-6 { background: #D500F9; }
+            .bg-avatar-7 { background: #00B0FF; }
+            .bg-avatar-8 { background: #F50057; }
         </style>
 
         {% block javascripts %}
@@ -204,7 +233,7 @@
                     </a>
 
                     <a href="{{ path('app_profile') }}" class="header-user">
-                        <img src="{{ asset(app.user.avatar|default(app.user.agent and app.user.agent.avatar ? app.user.agent.avatar : 'images/avatar.png')) }}" class="header-avatar">
+                        {{ avatars.display(app.user, 'avatar-s') }}
                         <span style="font-family:'Rubik-Medium',sans-serif; font-size:14px; color:#191D31;">{{ app.user.name }}</span>
                     </a>
                 </div>

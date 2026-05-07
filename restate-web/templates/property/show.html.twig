@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import "macros/avatar.html.twig" as avatars %}
 
 {% block title %}{{ property.title }} - Real Scout{% endblock %}
 
@@ -202,7 +203,7 @@
             <div class="agent-row">
                 <a href="{{ path('app_agent_show', {id: property.agent.id}) }}" class="agent-info" style="text-decoration:none;">
                     <div class="agent-avatar">
-                        <img src="{{ property.agent.avatar ? asset(property.agent.avatar) : asset('images/avatar.png') }}">
+                        {{ avatars.display(property.agent, 'avatar-m') }}
                     </div>
                     <div>
                         <p class="agent-name">{{ property.agent.name|default('Real Scout Agent') }}</p>
@@ -311,8 +312,8 @@
                 {% for review in property.reviews %}
                     <div class="review-card">
                         <div class="review-header">
-                            <div class="review-user">
-                                <img src="{{ asset(review.user.avatar|default('images/avatar.png')) }}">
+                            <div class="review-user" style="display:flex; align-items:center; gap:8px;">
+                                {{ avatars.display(review.user, 'avatar-s') }}
                                 <span>{{ review.user.name|default('Anonymous') }}</span>
                             </div>
                             <div class="review-badge">

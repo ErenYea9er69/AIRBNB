@@ -65,28 +65,26 @@ class AdminController extends AbstractController
         if ($request->isMethod('POST')) {
             $user->setName($request->request->get('name'));
             $user->setEmail($request->request->get('email'));
-            $userType = $request->request->get('user_type');
-            $user->setUserType($userType);
-            
-            if ($userType === 'seller' && !$user->getAgent()) {
-                $agent = new Agent();
-                $agent->setName($user->getName());
-                $agent->setEmail($user->getEmail());
-                $agent->setAvatar('images/avatar.png');
-                $agent->setUser($user);
-                $em->persist($agent);
-            }
             
             $newPassword = $request->request->get('password');
             if ($newPassword) {
                 $user->setPassword($hasher->hashPassword($user, $newPassword));
             }
 
-            $roles = $request->request->all('roles');
-            $user->setRoles($roles);
+            // Handle Admin Access exclusively
+            if ($request->request->get('is_admin')) {
+                $user->setRoles(['ROLE_ADMIN']);
+            } else {
+                // If they were an admin and it's removed, return to basic user
+                // If they weren't an admin, we leave their existing roles (like ROLE_SELLER) alone as per "he can't change it"
+                $roles = $user->getRoles();
+                if (in_array('ROLE_ADMIN', $roles)) {
+                    $user->setRoles(['ROLE_USER']);
+                }
+            }
 
             $em->flush();
-            $this->addFlash('success', 'User node updated.');
+            $this->addFlash('success', 'User permissions updated.');
             return $this->redirectToRoute('app_admin_users');
         }
 

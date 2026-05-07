@@ -1,0 +1,21 @@
+{% macro display(user, size_class = 'avatar-s') %}
+    {% if user.avatar %}
+        <img src="{{ asset(user.avatar) }}" class="{{ size_class }}" style="border-radius: 50%; object-fit: cover;">
+    {% else %}
+        {# Use the first letter of name, fallback to first letter of email #}
+        {% set name = user.name|default(user.email)|default('U') %}
+        {% set letter = name|slice(0, 1)|upper %}
+        
+        {# Pick a color based on the first letter to keep it consistent #}
+        {% set colors = ['bg-avatar-1', 'bg-avatar-2', 'bg-avatar-3', 'bg-avatar-4', 'bg-avatar-5', 'bg-avatar-6', 'bg-avatar-7', 'bg-avatar-8'] %}
+        {% set char_code = letter|trim|upper|format('%d') %}
+        {# Simple hash for color selection #}
+        {% set color_index = (letter|slice(0,1)|lower|trim == 's' ? 1 : (letter|slice(0,1)|lower|trim == 'a' ? 2 : (letter|slice(0,1)|lower|trim == 'r' ? 3 : (letter|slice(0,1)|lower|trim == 'm' ? 4 : 5)))) %}
+        {# Better: just use a loop index or something based on string length if we want more randomness #}
+        {% set color_index = (name|length % 8) + 1 %}
+        
+        <div class="letter-avatar {{ size_class }} bg-avatar-{{ color_index }}">
+            {{ letter }}
+        </div>
+    {% endif %}
+{% endmacro %}
