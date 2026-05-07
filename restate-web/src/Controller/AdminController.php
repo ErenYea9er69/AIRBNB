@@ -163,6 +163,17 @@ class AdminController extends AbstractController
                 $property->setImage('uploads/properties/'.$newFilename);
             }
 
+            $galleryFiles = $form->get('galleryFiles')->getData();
+            foreach ($galleryFiles as $galleryFile) {
+                $newFilename = uniqid().'.'.$galleryFile->guessExtension();
+                $galleryFile->move($this->getParameter('kernel.project_dir').'/public/uploads/properties', $newFilename);
+                
+                $gallery = new \App\Entity\Gallery();
+                $gallery->setImage('uploads/properties/'.$newFilename);
+                $gallery->setProperty($property);
+                $em->persist($gallery);
+            }
+
             $em->flush();
             $this->addFlash('success', 'Listing updated by Administrator.');
             return $this->redirectToRoute('app_admin_properties');
@@ -194,6 +205,17 @@ class AdminController extends AbstractController
         $em->flush();
         $this->addFlash('success', 'Property removed by Administrator.');
         return $this->redirectToRoute('app_admin_properties');
+    }
+
+    #[Route('/gallery/{id}/delete', name: 'app_admin_gallery_delete', methods: ['POST'])]
+    public function deleteGallery(\App\Entity\Gallery $gallery, EntityManagerInterface $em, Request $request): Response
+    {
+        $propertyId = $gallery->getProperty()->getId();
+        $em->remove($gallery);
+        $em->flush();
+
+        $this->addFlash('success', 'Gallery image removed.');
+        return $this->redirectToRoute('app_admin_property_edit', ['id' => $propertyId]);
     }
 
     #[Route('/categories', name: 'app_admin_categories', methods: ['GET', 'POST'])]

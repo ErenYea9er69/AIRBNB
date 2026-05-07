@@ -93,11 +93,31 @@
 
 
 
-            <div class="form-group">
-                {{ form_label(form.imageFile) }}
-                {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
-                <div style="margin-top: 10px;">
-                    <img src="{{ asset(property.image) }}" style="height: 100px; border-radius: 8px;">
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form_label(form.imageFile) }}
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    <div style="margin-top: 10px;">
+                        <span style="font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 5px;">Main Image</span>
+                        <img src="{{ asset(property.image) }}" style="height: 120px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow);">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.galleryFiles) }}
+                    {{ form_widget(form.galleryFiles, {'attr': {'class': 'form-control'}}) }}
+                    <div style="font-size: 11px; color: var(--text-dim); margin-top: 5px;">Upload new images to the property gallery.</div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form_label(form.latitude) }}
+                    {{ form_widget(form.latitude, {'attr': {'class': 'form-control', 'id': 'property_latitude'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.longitude) }}
+                    {{ form_widget(form.longitude, {'attr': {'class': 'form-control', 'id': 'property_longitude'}}) }}
                 </div>
             </div>
 
@@ -127,6 +147,25 @@
                 <a href="{{ path('app_admin_properties') }}" class="btn" style="background: transparent; border: 1.5px solid var(--border); color: var(--text-dim); text-decoration: none; display: flex; align-items: center; justify-content: center;">Discard Changes</a>
             </div>
         {{ form_end(form) }}
+
+        {# ─── GALLERY MODERATION (OUTSIDE MAIN FORM) ─── #}
+        <div style="margin-top: 40px; border-top: 1.5px dashed var(--border); padding-top: 30px;">
+            <h4 style="margin-bottom: 20px; font-size: 16px; color: var(--text-main);">Current Gallery Moderation</h4>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                {% for gallery in property.galleries %}
+                    <div style="position: relative; group">
+                        <img src="{{ asset(gallery.image) }}" style="width: 140px; height: 100px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); box-shadow: var(--shadow);">
+                        <form action="{{ path('app_admin_gallery_delete', {id: gallery.id}) }}" method="POST" style="position: absolute; top: -8px; right: -8px;" onsubmit="return confirm('Permanently remove this image from gallery?');">
+                            <button type="submit" style="background: #ff3e3e; color: white; border: none; border-radius: 50%; width: 26px; height: 26px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;">✕</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div style="font-size: 13px; color: var(--text-dim); padding: 40px; background: var(--bg); border-radius: 16px; width: 100%; text-align: center; border: 2px dashed var(--border);">
+                        No secondary images are currently listed for this property.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
